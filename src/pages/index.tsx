@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
+import { RouterOutputs } from "../utils/api";
 
 const CreatePostWizzard = () => {
   const { user } = useUser();
@@ -21,6 +22,18 @@ const CreatePostWizzard = () => {
         placeholder="Type something"
         className="grow bg-transparent outline-none"
       />
+    </div>
+  );
+};
+
+type PostWithUser = RouterOutputs["posts"]["getAll"][number];
+
+const PostView = (props: PostWithUser) => {
+  const { post, author } = props;
+  return (
+    <div className="flex gap-2 border-b p-2">
+      <p>{post.content}</p>
+      <p>{author?.username}</p>
     </div>
   );
 };
@@ -52,14 +65,9 @@ export default function Home() {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            {data?.map(({ post, author }) => {
-              return (
-                <div key={post.id} className="flex gap-2 border-b p-2">
-                  <p>{post.content}</p>
-                  <p>{author!.username}</p>
-                </div>
-              );
-            })}
+            {data?.map((fullPost) => (
+              <PostView {...fullPost} key={fullPost.post.id} />
+            ))}
           </div>
         </div>
       </main>

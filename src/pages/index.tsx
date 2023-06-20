@@ -38,7 +38,10 @@ const PostView = (props: PostWithUser) => {
         className="h-12 w-12 rounded-full"
       />
       <div className="flex flex-col">
-        <span className="text-sm italic text-slate-300">{`@${author.username}`}</span>
+        <div className="flex gap-1 text-sm text-slate-300">
+          <span className="font-bold">{`@${author.username}`}</span>
+          <span className="font-thin">{`∙ 1 hour ago`}</span>
+        </div>
         <span>{post.content}</span>
       </div>
     </div>
@@ -59,7 +62,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen items-center justify-center">
-        <div className="h-full w-full border-x border-slate-400 bg-slate-600 md:max-w-2xl">
+        <div className="h-full w-full border-x border-slate-400 bg-slate-800 md:max-w-2xl">
           <div className="border-b border-slate-400 p-2">
             {!user.isSignedIn && (
               <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />

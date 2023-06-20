@@ -16,7 +16,7 @@ const CreatePostWizzard = () => {
       <img
         src={user.profileImageUrl}
         className="h-16 w-16 rounded-full"
-        alt="Profile Photo"
+        alt="Your profile photo"
       />
       <input
         placeholder="Type something"
@@ -32,8 +32,15 @@ const PostView = (props: PostWithUser) => {
   const { post, author } = props;
   return (
     <div className="flex gap-2 border-b p-2">
-      <p>{post.content}</p>
-      <p>{author?.username}</p>
+      <img
+        src={author.profilePicture}
+        alt={`${author.username} avatar`}
+        className="h-12 w-12 rounded-full"
+      />
+      <div className="flex flex-col">
+        <span className="text-sm italic text-slate-300">{`@${author.username}`}</span>
+        <span>{post.content}</span>
+      </div>
     </div>
   );
 };

@@ -59,12 +59,26 @@ const PostView = (props: PostWithUser) => {
     </div>
   );
 };
+
+const Feed = () => {
+  const { data, isLoading: postLoading } = api.posts.getAll.useQuery();
+  if (postLoading) return <LoadingFullPage />;
+  if (!data) return <div>Ups...Something went wrong</div>;
+  return (
+    <div className="flex flex-col gap-2">
+      {data?.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />
+      ))}
+    </div>
+  );
+};
 export default function Home() {
-  const user = useUser();
+  const { user, isLoaded: userLoaded, isSignedIn } = useUser();
 
-  const { data, isLoading } = api.posts.getAll.useQuery();
+  //start fetching asap
+  api.posts.getAll.useQuery();
 
-  if (isLoading || true) return <LoadingFullPage />;
+  if (!userLoaded) return <LoadingFullPage />;
 
   return (
     <>
@@ -76,21 +90,17 @@ export default function Home() {
       <main className="flex h-screen items-center justify-center">
         <div className="h-full w-full border-x border-slate-400 bg-slate-800 md:max-w-2xl">
           <div className="border-b border-slate-400 p-2">
-            {!user.isSignedIn && (
+            {!isSignedIn && (
               <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />
             )}
-            {!!user.isSignedIn && (
+            {isSignedIn && (
               <>
                 <SignOutButton />
                 <CreatePostWizzard />
               </>
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            {data?.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>

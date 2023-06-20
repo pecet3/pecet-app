@@ -1,10 +1,12 @@
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { RouterOutputs } from "../utils/api";
+import { LoadingSpinner, LoadingFullPage } from "../components/loading";
 
 dayjs.extend(relativeTime);
 
@@ -17,10 +19,12 @@ const CreatePostWizzard = () => {
 
   return (
     <div className="flex w-full gap-2">
-      <img
+      <Image
         src={user.profileImageUrl}
         className="h-16 w-16 rounded-full"
         alt="Your profile photo"
+        width={48}
+        height={48}
       />
       <input
         placeholder="Type something"
@@ -36,10 +40,12 @@ const PostView = (props: PostWithUser) => {
   const { post, author } = props;
   return (
     <div className="flex gap-2 border-b p-2">
-      <img
+      <Image
         src={author.profilePicture}
-        alt={`${author.username} avatar`}
+        alt={`@${author.username}'s avatar`}
         className="h-12 w-12 rounded-full"
+        width={48}
+        height={48}
       />
       <div className="flex flex-col">
         <div className="flex gap-1 text-sm text-slate-300">
@@ -58,7 +64,7 @@ export default function Home() {
 
   const { data, isLoading } = api.posts.getAll.useQuery();
 
-  if (isLoading) return <div>Loading</div>;
+  if (isLoading || true) return <LoadingFullPage />;
 
   return (
     <>

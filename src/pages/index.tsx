@@ -73,7 +73,7 @@ const Feed = () => {
   );
 };
 export default function Home() {
-  const { user, isLoaded: userLoaded, isSignedIn } = useUser();
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   //start fetching asap
   api.posts.getAll.useQuery();

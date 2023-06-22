@@ -48,13 +48,15 @@ const CreatePostWizzard = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button
-        className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
-        onClick={handleClick}
-      >
-        Submit
-      </button>
-      <p>{counter} / 280</p>
+      <div className="flex flex-col items-center self-end">
+        <button
+          className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
+          onClick={handleClick}
+        >
+          Submit
+        </button>
+        <p className="text-xs">{counter} / 280</p>
+      </div>
     </div>
   );
 };

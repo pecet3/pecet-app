@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,9 +12,23 @@ import { LoadingSpinner, LoadingFullPage } from "../components/loading";
 dayjs.extend(relativeTime);
 
 const CreatePostWizzard = () => {
+  const [input, setInput] = useState<string>("");
+  const [counter, setCounter] = useState<number>(input.length);
+
   const { user } = useUser();
 
+  const { mutate } = api.posts.create.useMutation();
+
   console.log(user);
+
+  useEffect(() => {
+    setCounter(input.length);
+  }, [input]);
+
+  const handleClick = () => {
+    mutate({ content: input });
+    setInput("");
+  };
 
   if (!user) return null;
 
@@ -28,8 +43,18 @@ const CreatePostWizzard = () => {
       />
       <input
         placeholder="Type something"
+        type="text"
         className="grow bg-transparent outline-none"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
       />
+      <button
+        className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
+        onClick={handleClick}
+      >
+        Submit
+      </button>
+      <p>{counter} / 280</p>
     </div>
   );
 };

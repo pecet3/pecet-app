@@ -40,7 +40,7 @@ export const postsRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const authorId = ctx.currentUser.id;
+            const authorId = ctx.userId;
 
             const post = await ctx.prisma.post.create({
                 data: {

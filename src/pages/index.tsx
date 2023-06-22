@@ -14,6 +14,7 @@ dayjs.extend(relativeTime);
 const CreatePostWizzard = () => {
   const [input, setInput] = useState<string>("");
   const [counter, setCounter] = useState<number>(input.length);
+  const maxInputLength = 280;
 
   const { user } = useUser();
 
@@ -52,10 +53,13 @@ const CreatePostWizzard = () => {
         <button
           className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
           onClick={handleClick}
+          disabled={counter >= maxInputLength}
         >
           Submit
         </button>
-        <p className="text-xs">{counter} / 280</p>
+        <p className={`text-xs ${counter >= maxInputLength && "text-red-400"}`}>
+          {counter} / {maxInputLength}
+        </p>
       </div>
     </div>
   );
@@ -92,7 +96,7 @@ const Feed = () => {
   if (postLoading) return <LoadingFullPage />;
   if (!data) return <div>Ups...Something went wrong</div>;
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col-reverse gap-2">
       {data?.map((fullPost) => (
         <PostView {...fullPost} key={fullPost.post.id} />
       ))}

@@ -18,7 +18,14 @@ const CreatePostWizzard = () => {
 
   const { user } = useUser();
 
-  const { mutate } = api.posts.create.useMutation();
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      void ctx.posts.getAll.invalidate;
+    },
+  });
 
   console.log(user);
 
@@ -28,7 +35,6 @@ const CreatePostWizzard = () => {
 
   const handleClick = () => {
     mutate({ content: input });
-    setInput("");
   };
 
   if (!user) return null;
@@ -53,7 +59,7 @@ const CreatePostWizzard = () => {
         <button
           className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
           onClick={handleClick}
-          disabled={counter >= maxInputLength}
+          disabled={counter >= maxInputLength || isPosting}
         >
           Submit
         </button>
@@ -96,7 +102,7 @@ const Feed = () => {
   if (postLoading) return <LoadingFullPage />;
   if (!data) return <div>Ups...Something went wrong</div>;
   return (
-    <div className="flex flex-col-reverse gap-2">
+    <div className="flex flex-col gap-2">
       {data?.map((fullPost) => (
         <PostView {...fullPost} key={fullPost.post.id} />
       ))}

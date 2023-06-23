@@ -11,12 +11,15 @@ const config = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.clerk.dev',
+        hostname: '**',
         port: '',
-        pathname: '/oauth_github/**',
+        pathname: '**',
       },
+
+
     ],
   },
+
 
 
   /**

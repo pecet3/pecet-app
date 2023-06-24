@@ -7,7 +7,7 @@ import "~/styles/globals.css";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
-      <Toaster position="bottom-center"  />
+      <Toaster position="bottom-center" />
       <Component {...pageProps} />
     </ClerkProvider>
   );

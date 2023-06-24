@@ -7,6 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { RouterOutputs } from "../utils/api";
+import { toast } from "react-hot-toast";
 import { LoadingSpinner, LoadingFullPage } from "../components/loading";
 
 dayjs.extend(relativeTime);
@@ -24,6 +25,9 @@ const CreatePostWizzard = () => {
     onSuccess: () => {
       setInput("");
       void ctx.posts.getAll.invalidate;
+    },
+    onError: () => {
+      toast.error("Failed to post, try again later");
     },
   });
 

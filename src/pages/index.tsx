@@ -142,7 +142,7 @@ export default function Home() {
         <meta name="description" content="pecet app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-screen items-center justify-center">
+      <main className="background flex h-screen items-center justify-center">
         <div className="h-full w-full overflow-y-scroll border-x border-slate-400 bg-slate-800 md:max-w-2xl">
           <div className="border-b border-slate-400 p-2">
             {!isSignedIn && (

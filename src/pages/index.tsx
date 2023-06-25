@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -45,10 +45,6 @@ const CreatePostWizzard = () => {
     setCounter(input.length);
   }, [input]);
 
-  const handleClick = () => {
-    mutate({ content: input });
-  };
-
   if (!user) return null;
 
   return (
@@ -66,12 +62,20 @@ const CreatePostWizzard = () => {
         className="grow bg-transparent outline-none"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (input !== "") {
+              mutate({ content: input });
+            }
+          }
+        }}
       />
       {input !== "" && !isPosting ? (
         <div className="flex flex-col items-center self-end">
           <button
             className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
-            onClick={handleClick}
+            onClick={() => mutate({ content: input })}
             disabled={counter >= maxInputLength || isPosting}
           >
             Submit

@@ -77,7 +77,11 @@ const CreatePostWizzard = () => {
         >
           Submit
         </button>
-        <p className={`text-xs ${counter >= maxInputLength && "text-red-400"}`}>
+        <p
+          className={`text-xs ${
+            counter >= maxInputLength ? "text-red-400" : ""
+          }`}
+        >
           {counter} / {maxInputLength}
         </p>
       </div>
@@ -139,7 +143,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex h-screen items-center justify-center">
-        <div className="h-full w-full border-x border-slate-400 bg-slate-800 md:max-w-2xl">
+        <div className="h-full w-full overflow-y-scroll border-x border-slate-400 bg-slate-800 md:max-w-2xl">
           <div className="border-b border-slate-400 p-2">
             {!isSignedIn && (
               <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -13,6 +14,7 @@ import { LoadingSpinner, LoadingFullPage } from "../components/loading";
 dayjs.extend(relativeTime);
 
 const CreatePostWizzard = () => {
+  const router = useRouter();
   const [input, setInput] = useState<string>("");
   const [counter, setCounter] = useState<number>(input.length);
   const maxInputLength = 280;
@@ -25,9 +27,17 @@ const CreatePostWizzard = () => {
     onSuccess: () => {
       setInput("");
       void ctx.posts.getAll.invalidate;
+      toast.success("You added the post");
     },
-    onError: () => {
-      toast.error("Failed to post, try again later");
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      console.log("zodError", errorMessage);
+
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post, try again later");
+      }
     },
   });
 

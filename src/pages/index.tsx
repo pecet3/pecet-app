@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -14,7 +13,6 @@ import { LoadingSpinner, LoadingFullPage } from "../components/loading";
 dayjs.extend(relativeTime);
 
 const CreatePostWizzard = () => {
-  const router = useRouter();
   const [input, setInput] = useState<string>("");
   const [counter, setCounter] = useState<number>(input.length);
   const maxInputLength = 280;
@@ -26,8 +24,8 @@ const CreatePostWizzard = () => {
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
       setInput("");
-      void ctx.posts.getAll.invalidate;
-      toast.success("You added the post");
+      void ctx.posts.getAll.invalidate();
+      toast.success("You added the post!");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -69,22 +67,29 @@ const CreatePostWizzard = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <div className="flex flex-col items-center self-end">
-        <button
-          className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
-          onClick={handleClick}
-          disabled={counter >= maxInputLength || isPosting}
-        >
-          Submit
-        </button>
-        <p
-          className={`text-xs ${
-            counter >= maxInputLength ? "text-red-400" : ""
-          }`}
-        >
-          {counter} / {maxInputLength}
-        </p>
-      </div>
+      {input !== "" && !isPosting ? (
+        <div className="flex flex-col items-center self-end">
+          <button
+            className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
+            onClick={handleClick}
+            disabled={counter >= maxInputLength || isPosting}
+          >
+            Submit
+          </button>
+          <p
+            className={`text-xs ${
+              counter >= maxInputLength ? "text-red-400" : ""
+            }`}
+          >
+            {counter} / {maxInputLength}
+          </p>
+        </div>
+      ) : null}
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={24} />
+        </div>
+      )}
     </div>
   );
 };

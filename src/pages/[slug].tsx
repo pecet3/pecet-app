@@ -139,6 +139,8 @@ const Feed = () => {
 export default function Home() {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
+  const { data } = api.profile.getUserByName.useQuery({ username: "test" });
+
   //start fetching asap
   api.posts.getAll.useQuery();
 

@@ -1,151 +1,22 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import Link from "next/link";
-import Image from "next/image";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
+
 import { api } from "~/utils/api";
+import { prisma } from "~/server/db";
 import { RouterOutputs } from "../utils/api";
 import { toast } from "react-hot-toast";
-import { LoadingSpinner, LoadingFullPage } from "../components/loading";
+import { LoadingFullPage } from "~/components/loading";
 
-dayjs.extend(relativeTime);
-
-const CreatePostWizzard = () => {
-  const [input, setInput] = useState<string>("");
-  const [counter, setCounter] = useState<number>(input.length);
-  const maxInputLength = 280;
-
-  const { user } = useUser();
-
-  const ctx = api.useContext();
-
-  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
-    onSuccess: () => {
-      setInput("");
-      void ctx.posts.getAll.invalidate();
-      toast.success("You added the post!");
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.log("zodError", errorMessage);
-
-      if (errorMessage && errorMessage[0]) {
-        toast.error(errorMessage[0]);
-      } else {
-        toast.error("Failed to post, try again later");
-      }
-    },
+type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
+export default function ProfilePage() {
+  const { data, isLoading } = api.profile.getUserByName.useQuery({
+    username: "pecet3",
   });
 
-  console.log(user);
+  if (isLoading) return <LoadingFullPage />;
 
-  useEffect(() => {
-    setCounter(input.length);
-  }, [input]);
-
-  if (!user) return null;
-
-  return (
-    <div className="flex w-full gap-2">
-      <Image
-        src={user.profileImageUrl}
-        className="h-16 w-16 rounded-full"
-        alt="Your profile photo"
-        width={48}
-        height={48}
-      />
-      <input
-        placeholder="Type something"
-        type="text"
-        className="grow bg-transparent outline-none"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            if (input !== "") {
-              mutate({ content: input });
-            }
-          }
-        }}
-      />
-      {input !== "" && !isPosting ? (
-        <div className="flex flex-col items-center self-end">
-          <button
-            className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
-            onClick={() => mutate({ content: input })}
-            disabled={counter >= maxInputLength || isPosting}
-          >
-            Submit
-          </button>
-          <p
-            className={`text-xs ${
-              counter >= maxInputLength ? "text-red-400" : ""
-            }`}
-          >
-            {counter} / {maxInputLength}
-          </p>
-        </div>
-      ) : null}
-      {isPosting && (
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size={24} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-type PostWithUser = RouterOutputs["posts"]["getAll"][number];
-
-const PostView = (props: PostWithUser) => {
-  const { post, author } = props;
-  return (
-    <div className="flex gap-2 border-b p-2">
-      <Image
-        src={author.profilePicture}
-        alt={`@${author.username}'s avatar`}
-        className="h-12 w-12 rounded-full"
-        width={48}
-        height={48}
-      />
-      <div className="flex flex-col">
-        <div className="flex gap-1 text-sm text-slate-300">
-          <span className="font-bold">{`@${author.username}`}</span>
-          <span className="font-thin">{`∙ ${dayjs(
-            post.createdAt
-          ).fromNow()}`}</span>
-        </div>
-        <span className="text-lg">{post.content}</span>
-      </div>
-    </div>
-  );
-};
-
-const Feed = () => {
-  const { data, isLoading: postLoading } = api.posts.getAll.useQuery();
-  if (postLoading) return <LoadingFullPage />;
-  if (!data) return <div>Ups...Something went wrong</div>;
-  return (
-    <div className="flex flex-col gap-2">
-      {data?.map((fullPost) => (
-        <PostView {...fullPost} key={fullPost.post.id} />
-      ))}
-    </div>
-  );
-};
-export default function Home() {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
-
-  const { data } = api.profile.getUserByName.useQuery({ username: "test" });
-
-  //start fetching asap
-  api.posts.getAll.useQuery();
-
-  if (!userLoaded) return <LoadingFullPage />;
-
+  if (!data) return <p>404</p>;
+  console.log(data);
   return (
     <>
       <Head>
@@ -154,8 +25,46 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="background flex h-screen items-center justify-center">
-        <p>Profile view</p>
+        <p>{data.username}</p>
       </main>
     </>
   );
+}
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import {
+  GetStaticPaths,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from "next";
+import { appRouter } from "~/server/api/root";
+import superjson from "superjson";
+export async function getStaticProps(
+  context: GetStaticPropsContext<{ slug: string }>
+) {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: { prisma, userId: null },
+    transformer: superjson, // optional - adds superjson serialization
+  });
+  const slug = context.params?.slug;
+
+  const username = slug?.replace("@", "") as string;
+
+  if (typeof slug !== "string") throw new Error("no slug");
+  // prefetch
+
+  await helpers.profile.getUserByName.prefetch({ username });
+
+  return {
+    props: {
+      trpcState: helpers.dehydrate(),
+    },
+  };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
 }

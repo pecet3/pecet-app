@@ -9,6 +9,7 @@ import { api } from "~/utils/api";
 import { RouterOutputs } from "../utils/api";
 import { toast } from "react-hot-toast";
 import { LoadingSpinner, LoadingFullPage } from "../components/loading";
+import { PageLayout } from "./layout";
 
 dayjs.extend(relativeTime);
 
@@ -154,22 +155,20 @@ export default function Home() {
 
   return (
     <>
-      <main className="background flex h-screen items-center justify-center">
-        <div className="h-full w-full overflow-y-scroll border-x border-slate-400 bg-slate-800 md:max-w-2xl">
-          <div className="border-b border-slate-400 p-2">
-            {!isSignedIn && (
-              <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />
-            )}
-            {isSignedIn && (
-              <>
-                <SignOutButton />
-                <CreatePostWizzard />
-              </>
-            )}
-          </div>
-          <Feed />
+      <PageLayout>
+        <div className="border-b border-slate-400 p-2">
+          {!isSignedIn && (
+            <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />
+          )}
+          {isSignedIn && (
+            <>
+              <SignOutButton />
+              <CreatePostWizzard />
+            </>
+          )}
         </div>
-      </main>
+        <Feed />
+      </PageLayout>
     </>
   );
 }

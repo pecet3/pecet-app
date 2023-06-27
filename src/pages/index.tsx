@@ -25,7 +25,7 @@ const CreatePostWizzard = () => {
     onSuccess: () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
-      toast.success("You added the post!");
+      toast.success("You added a post!");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;

@@ -11,6 +11,7 @@ import { RouterOutputs } from "../utils/api";
 import { toast } from "react-hot-toast";
 import { LoadingFullPage } from "~/components/loading";
 import { useRouter } from "next/router";
+import { PageLayout } from "~/pages/layout";
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
@@ -38,24 +39,24 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   return (
     <>
       <Head>
-        <title>{name}`s profile / pecetApp</title>
+        <title>{name || ""}`s profile / pecetApp</title>
         <meta name="description" content={`pecet app`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="background flex h-screen items-center justify-center">
-        <div className="flex flex-col rounded-md bg-zinc-600 p-4 shadow-lg ring-1 ring-indigo-600">
-          <div className="flex items-center justify-between gap-4">
+      <PageLayout>
+        <div className="relative flex h-2/6 flex-col  bg-zinc-600 p-4 ">
+          <div className="absolute top-36 flex flex-col items-center self-start">
             <Image
               src={data.profilePicture}
-              className="h-16 w-16 rounded-full shadow-md shadow-slate-700"
+              className="shadow-mdring-2 h-44 w-44 rounded-full bg-slate-800 ring-slate-800"
               alt="Your profile photo"
               width={48}
               height={48}
             />
-            <p>{data.username}</p>
+            <p className="text-2xl font-bold">@{data.username}</p>
           </div>
         </div>
-      </main>
+      </PageLayout>
     </>
   );
 };

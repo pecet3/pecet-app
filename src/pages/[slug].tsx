@@ -14,21 +14,31 @@ import { useRouter } from "next/router";
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-  const { data, isLoading } = api.profile.getUserByName.useQuery({
-    username: "pecet3",
-  });
   const router = useRouter();
 
-  const name = router.query.slug;
+  const name = router.query.slug as string;
 
+  const parsedName = name.replace("@", "");
+
+  const { data, isLoading, isError } = api.profile?.getUserByName.useQuery({
+    username: parsedName,
+  });
   if (isLoading) return <LoadingFullPage />;
 
+  if (isError)
+    return (
+      <div>
+        <p>error happend</p>
+        <Link href="/">return to index</Link>
+      </div>
+    );
+
   if (!data) return <p>404</p>;
-  console.log(name);
+  console.log(parsedName);
   return (
     <>
       <Head>
-        <title>pecetApp</title>
+        <title>{name}`s profile / pecetApp</title>
         <meta name="description" content={`pecet app`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -54,6 +64,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import superjson from "superjson";
 import Image from "next/image";
+import Link from "next/link";
 export async function getStaticProps(
   context: GetStaticPropsContext<{ slug: string }>
 ) {

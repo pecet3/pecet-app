@@ -9,17 +9,37 @@ import { api } from "~/utils/api";
 import { prisma } from "~/server/db";
 import { RouterOutputs } from "../utils/api";
 import { toast } from "react-hot-toast";
-import { LoadingFullPage } from "~/components/loading";
+import { LoadingFullPage, LoadingSpinner } from "~/components/loading";
 import { useRouter } from "next/router";
 import { PageLayout } from "~/pages/layout";
-type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
+
+const ProfileFeed = (props: { userId: string }) => {
+  console.log(props.userId);
+  const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
+    userId: props.userId,
+  });
+  console.log(data);
+  if (isLoading) return <LoadingSpinner />;
+
+  if (!data || data.length === 0) return <p>error</p>;
+  return (
+    <div className="flex flex-col items-center gap-2">
+      {/* {data?.map((post) => (
+        <PostView post={post} author={author} key={post.id} />
+      ))} */}
+      {data.map((post) => (
+        <p key={post.id}>{post.content}</p>
+      ))}
+    </div>
+  );
+};
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const router = useRouter();
-
+  console.log(username, "username");
   const name = router.query.slug as string;
 
-  const parsedName = name.replace("@", "");
+  const parsedName = name.toString().replace("@", "");
 
   const { data, isLoading, isError } = api.profile?.getUserByName.useQuery({
     username: parsedName,
@@ -35,11 +55,10 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
     );
 
   if (!data) return <p>404</p>;
-  console.log(parsedName);
   return (
     <>
       <Head>
-        <title>{name || ""}`s profile / pecetApp</title>
+        <title>{name && name + "'s profile / pecetApp"}</title>
         <meta name="description" content={`pecet app`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -56,6 +75,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             <p className="text-2xl font-bold">@{data.username}</p>
           </div>
         </div>
+        <ProfileFeed userId={data.id} />
       </PageLayout>
     </>
   );
@@ -66,6 +86,7 @@ import { appRouter } from "~/server/api/root";
 import superjson from "superjson";
 import Image from "next/image";
 import Link from "next/link";
+import { PostView } from "../components/postView";
 export async function getStaticProps(
   context: GetStaticPropsContext<{ slug: string }>
 ) {

@@ -48,7 +48,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 
   if (isError)
     return (
-      <div>
+      <div className="flex justify-center">
         <p>error happend</p>
         <Link href="/">return to index</Link>
       </div>

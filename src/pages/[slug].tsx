@@ -11,7 +11,7 @@ import { RouterOutputs } from "../utils/api";
 import { toast } from "react-hot-toast";
 import { LoadingFullPage, LoadingSpinner } from "~/components/loading";
 import { useRouter } from "next/router";
-import { PageLayout } from "~/pages/layout";
+import PageLayout from "~/pages/layout";
 
 const ProfileFeed = (props: { userId: string }) => {
   console.log(props.userId);
@@ -75,7 +75,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             <p className="text-2xl font-bold">@{data.username}</p>
           </div>
         </div>
-        <ProfileFeed userId={data.id} />
+        {/* <ProfileFeed userId={data.id} /> */}
       </PageLayout>
     </>
   );

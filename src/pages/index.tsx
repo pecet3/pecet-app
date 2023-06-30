@@ -10,7 +10,7 @@ import { RouterOutputs } from "../utils/api";
 import { PostView } from "~/components/postView";
 import { toast } from "react-hot-toast";
 import { LoadingSpinner, LoadingFullPage } from "../components/loading";
-import { PageLayout } from "./layout";
+import PageLayout from "./layout";
 
 dayjs.extend(relativeTime);
 

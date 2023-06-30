@@ -111,7 +111,7 @@ export async function getStaticProps(
   };
 }
 
-export async function getStaticPaths() {
+export function getStaticPaths() {
   return {
     paths: [],
     fallback: "blocking",

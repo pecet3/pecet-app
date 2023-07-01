@@ -23,12 +23,13 @@ const ProfileFeed = (props: { userId: string }) => {
 
   if (!data || data.length === 0) return <p>error</p>;
   return (
-    <div className="flex flex-col items-center gap-2">
-      {/* {data?.map((post) => (
-        <PostView post={post} author={author} key={post.id} />
-      ))} */}
-      {data.map((post) => (
-        <p key={post.id}>{post.content}</p>
+    <div className="mt-32 flex flex-col gap-2">
+      {data?.map((fullpost) => (
+        <PostView
+          post={fullpost.post}
+          author={fullpost.author}
+          key={fullpost.post.id}
+        />
       ))}
     </div>
   );
@@ -63,11 +64,16 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PageLayout>
-        <div className="relative flex h-2/6 flex-col  bg-zinc-600 p-4 ">
-          <div className="absolute top-36 flex flex-col items-center self-start">
+        <div className="relative flex h-60 flex-col  bg-zinc-600 p-0 ">
+          <img
+            src="https://img.freepik.com/free-photo/pile-3d-facebook-logos_1379-875.jpg?w=2000"
+            className="fill h-full bg-slate-800 ring-slate-800"
+            alt="Your profile photo"
+          />
+          <div className="absolute left-2 top-36 flex flex-col items-center self-start">
             <Image
               src={data.profilePicture}
-              className="shadow-mdring-2 h-44 w-44 rounded-full bg-slate-800 ring-slate-800"
+              className="h-44 w-44 rounded-full bg-slate-700 shadow-md ring-2 ring-slate-600"
               alt="Your profile photo"
               width={48}
               height={48}
@@ -75,7 +81,8 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             <p className="text-2xl font-bold">@{data.username}</p>
           </div>
         </div>
-        {/* <ProfileFeed userId={data.id} /> */}
+
+        <ProfileFeed userId={data.id} />
       </PageLayout>
     </>
   );

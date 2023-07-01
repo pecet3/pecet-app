@@ -118,6 +118,20 @@ export const postsRouter = createTRPCRouter({
         }).then(addUserDataToPosts)
         return posts
     }),
+    getPostById: publicProcedure.input(z.object({
+        postId: z.string(),
+    })).query(async ({ ctx, input }) => {
+        const post = await ctx.prisma.post.findMany({
+            where: {
+                id: input.postId
+            },
+            take: 1
+        }).then(addUserDataToPosts)
+
+        return post
+    }
+    ),
+
     getPostsByUserId: publicProcedure
         .input(
             z.object({
@@ -135,6 +149,5 @@ export const postsRouter = createTRPCRouter({
                 }).then(addUserDataToPosts)
 
             return posts
-        }
-        ),
+        }),
 });

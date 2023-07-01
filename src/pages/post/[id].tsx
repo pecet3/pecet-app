@@ -9,140 +9,61 @@ import { api } from "~/utils/api";
 import { RouterOutputs } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { LoadingSpinner, LoadingFullPage } from "~/components/loading";
-
+import { PostView } from "~/components/postView";
+import { useRouter } from "next/router";
 dayjs.extend(relativeTime);
 
-const CreatePostWizzard = () => {
-  const [input, setInput] = useState<string>("");
-  const [counter, setCounter] = useState<number>(input.length);
-  const maxInputLength = 280;
-
-  const { user } = useUser();
-
-  const ctx = api.useContext();
-
-  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
-    onSuccess: () => {
-      setInput("");
-      void ctx.posts.getAll.invalidate();
-      toast.success("You added the post!");
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.log("zodError", errorMessage);
-
-      if (errorMessage && errorMessage[0]) {
-        toast.error(errorMessage[0]);
-      } else {
-        toast.error("Failed to post, try again later");
-      }
-    },
+const Feed = (props: { userId: string }) => {
+  console.log(props.userId);
+  const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
+    userId: props.userId,
   });
-
-  console.log(user);
-
-  useEffect(() => {
-    setCounter(input.length);
-  }, [input]);
-
-  if (!user) return null;
-
-  return (
-    <div className="flex w-full gap-2">
-      <Image
-        src={user.profileImageUrl}
-        className="h-16 w-16 rounded-full"
-        alt="Your profile photo"
-        width={48}
-        height={48}
-      />
-      <input
-        placeholder="Type something"
-        type="text"
-        className="grow bg-transparent outline-none"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            if (input !== "") {
-              mutate({ content: input });
-            }
-          }
-        }}
-      />
-      {input !== "" && !isPosting ? (
-        <div className="flex flex-col items-center self-end">
-          <button
-            className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
-            onClick={() => mutate({ content: input })}
-            disabled={counter >= maxInputLength || isPosting}
-          >
-            Submit
-          </button>
-          <p
-            className={`text-xs ${
-              counter >= maxInputLength ? "text-red-400" : ""
-            }`}
-          >
-            {counter} / {maxInputLength}
-          </p>
-        </div>
-      ) : null}
-      {isPosting && (
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size={24} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-type PostWithUser = RouterOutputs["posts"]["getAll"][number];
-
-const PostView = (props: PostWithUser) => {
-  const { post, author } = props;
-  return (
-    <div className="flex gap-2 border-b p-2">
-      <Image
-        src={author.profilePicture}
-        alt={`@${author.username}'s avatar`}
-        className="h-12 w-12 rounded-full"
-        width={48}
-        height={48}
-      />
-      <div className="flex flex-col">
-        <div className="flex gap-1 text-sm text-slate-300">
-          <span className="font-bold">{`@${author.username}`}</span>
-          <span className="font-thin">{`∙ ${dayjs(
-            post.createdAt
-          ).fromNow()}`}</span>
-        </div>
-        <span className="text-lg">{post.content}</span>
+  console.log(data);
+  if (isLoading)
+    return (
+      <div className="mt-28 flex items-center justify-center">
+        <LoadingSpinner size={64} />
       </div>
-    </div>
-  );
-};
+    );
 
-const Feed = () => {
-  const { data, isLoading: postLoading } = api.posts.getAll.useQuery();
-  if (postLoading) return <LoadingFullPage />;
-  if (!data) return <div>Ups...Something went wrong</div>;
+  if (!data || data.length === 0) return <p>error</p>;
   return (
-    <div className="flex flex-col gap-2">
-      {data?.map((fullPost) => (
-        <PostView {...fullPost} key={fullPost.post.id} />
+    <div className="mt-32 flex flex-col gap-2">
+      {data?.map((fullpost) => (
+        <PostView
+          post={fullpost.post}
+          author={fullpost.author}
+          key={fullpost.post.id}
+        />
       ))}
     </div>
   );
 };
-export default function Home() {
+export default function PostPage() {
+  const router = useRouter();
+
+  const postId = router.query.id?.toString();
+
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   //start fetching asap
-  api.posts.getAll.useQuery();
+  if (typeof postId === "undefined") return;
 
-  if (!userLoaded) return <LoadingFullPage />;
+  const { data, isError } = api.posts.getPostById.useQuery({
+    postId: postId,
+  });
+
+  if (!data || typeof data === "undefined") return null;
+
+  const author = data[0]?.author;
+  const post = data[0]?.post;
+
+  if (
+    !userLoaded ||
+    typeof author === "undefined" ||
+    typeof post === "undefined"
+  )
+    return <LoadingFullPage />;
 
   return (
     <>
@@ -152,7 +73,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="background flex h-screen items-center justify-center">
-        <p>post</p>
+        <PostView post={post} author={author} />
       </main>
     </>
   );

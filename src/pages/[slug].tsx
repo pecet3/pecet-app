@@ -19,7 +19,12 @@ const ProfileFeed = (props: { userId: string }) => {
     userId: props.userId,
   });
   console.log(data);
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading)
+    return (
+      <div className="mt-28 flex items-center justify-center">
+        <LoadingSpinner size={64} />
+      </div>
+    );
 
   if (!data || data.length === 0) return <p>error</p>;
   return (

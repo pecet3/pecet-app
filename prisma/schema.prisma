@@ -13,6 +13,7 @@ model Post {
   createdAt DateTime @default(now())
   content   String   @db.VarChar(280)
   authorId  String
+  emoji     String?
 
   @@index([authorId])
 }

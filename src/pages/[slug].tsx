@@ -26,7 +26,7 @@ const ProfileFeed = (props: { userId: string }) => {
 
   if (!data || data.length === 0) return <p>error</p>;
   return (
-    <div className="mt-32 flex flex-col gap-2">
+    <div className="flex flex-col gap-2 border-t">
       {data?.map((fullpost) => (
         <PostView
           post={fullpost.post}
@@ -67,24 +67,32 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PageLayout>
-        <div className="relative flex h-60 flex-col  bg-zinc-600 p-0 ">
+        <div className="relative  flex h-60 flex-col bg-slate-800 p-0 ">
           <img
-            src="https://img.freepik.com/free-photo/pile-3d-facebook-logos_1379-875.jpg?w=2000"
+            src="https://images2.alphacoders.com/941/thumb-1920-941898.jpg"
             className="fill h-full bg-slate-800 ring-slate-800"
             alt="Your profile photo"
           />
-          <div className="absolute left-2 top-36 flex flex-col items-center self-start">
+          <div className="absolute left-1/4 top-36 m-auto flex flex-col items-center justify-center self-start sm:left-8 md:left-2">
             <Image
               src={data.profilePicture}
-              className="h-44 w-44 rounded-full bg-slate-700 shadow-md ring-2 ring-slate-600"
+              className="h-44 w-44 rounded-full bg-slate-700 ring-2 ring-slate-600"
               alt="Your profile photo"
               width={48}
               height={48}
             />
-            <p className="text-2xl font-bold">@{data.username}</p>
+            <p className="text-xl font-bold md:text-2xl">@{data.username}</p>
           </div>
         </div>
-
+        <div className="m-auto mt-24 flex max-w-md p-2 text-sm md:ml-48 md:mt-4  md:text-base">
+          <p className="justify-self-end p-4 italic text-slate-400">
+            Lorem ipsum. To jest test długiego tekstu. Lorem ipsum. To jest test
+            długiego tekstu. Lorem ipsum. o tekstu. Lorem ipsum. To jest test
+            długiego tekstu.Lorem ipsum. To jest test długiego tekstu. Lorem
+            ipsum. To jest test długiego tekstu. Lorem ipsum. Tstu.
+            qwerttyuyuyyyyyyyyyyyyyy
+          </p>
+        </div>
         <ProfileFeed userId={data.id} />
       </PageLayout>
     </>

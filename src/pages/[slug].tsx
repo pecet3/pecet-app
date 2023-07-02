@@ -6,6 +6,7 @@ import { prisma } from "~/server/db";
 import { LoadingFullPage, LoadingSpinner } from "~/components/loading";
 import { useRouter } from "next/router";
 import PageLayout from "~/pages/layout";
+import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading, isError } = api.posts.getPostsByUserId.useQuery({
@@ -85,21 +86,26 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           <div className="absolute left-1/4 top-36 m-auto flex flex-col items-center justify-center self-start sm:left-8 md:left-2">
             <Image
               src={data.profilePicture}
-              className="h-44 w-44 rounded-full bg-slate-700 ring-2 ring-slate-600"
+              className="h-44 w-44 rounded-full bg-slate-700 ring-2 ring-slate-700"
               alt="Your profile photo"
               width={48}
               height={48}
             />
             <p className="text-xl font-bold md:text-2xl">@{data.username}</p>
           </div>
+          <button
+            className="absolute rounded-full p-2 text-slate-800 "
+            onClick={() => router.push("/")}
+          >
+            <BsFillArrowLeftCircleFill
+              size={32}
+              className="rounded-full shadow-md shadow-gray-600"
+            />
+          </button>
         </div>
-        <div className="m-auto mt-24 flex max-w-md p-2 text-sm sm:ml-48 sm:mt-4  md:text-base">
+        <div className="m-auto mt-24 flex max-w-md p-2 text-sm sm:mb-12 sm:ml-48 sm:mt-4  md:text-base">
           <blockquote className="justify-self-end p-4 italic text-slate-400">
-            Lorem ipsum. To jest test długiego tekstu. Lorem ipsum. To jest test
-            długiego tekstu. Lorem ipsum. o tekstu. Lorem ipsum. To jest test
-            długiego tekstu.Lorem ipsum. To jest test długiego tekstu. Lorem
-            ipsum. To jest test długiego tekstu. Lorem ipsum. Tstu.
-            qwerttyuyuyyyyyyyyyyyyyy
+            {data.description}
           </blockquote>
         </div>
         <ProfileFeed userId={data.id} />

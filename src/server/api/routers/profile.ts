@@ -5,7 +5,8 @@ import { TRPCError } from "@trpc/server";
 
 import { clerkClient, type User } from "@clerk/nextjs/server"
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+
+import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/api/trpc";
 
 export const profileRouter = createTRPCRouter({
 
@@ -23,6 +24,17 @@ export const profileRouter = createTRPCRouter({
 
         return filterUserForClient(user)
     }),
+    editMetadata: privateProcedure.input(z.object({
+        userId: z.string(),
+        description: z.string().max(281)
+    })).mutation(async ({ ctx, input }) => {
+        const userId = ctx.userId;
+        if (userId !== input.userId) return new TRPCError({ code: "UNAUTHORIZED" })
+
+        const user = await clerkClient.users.updateUser(userId, { publicMetadata: { description: input.description } });
+        return user;
+    }),
 
     // getUserById: publicProcedure.input(z.object({userId: z.string()})).query()
 });
+

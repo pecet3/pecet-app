@@ -93,15 +93,12 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             />
             <p className="text-xl font-bold md:text-2xl">@{data.username}</p>
           </div>
-          <button
-            className="absolute rounded-full p-2 text-slate-800 "
-            onClick={() => router.push("/")}
-          >
+          <Link className="absolute rounded-full p-2 text-slate-800 " href="/">
             <BsFillArrowLeftCircleFill
               size={32}
               className="rounded-full shadow-md shadow-gray-600"
             />
-          </button>
+          </Link>
         </div>
         <div className="m-auto mt-24 flex max-w-md p-2 text-sm sm:mb-12 sm:ml-48 sm:mt-4  md:text-base">
           <blockquote className="justify-self-end p-4 italic text-slate-400">

@@ -20,27 +20,23 @@ const emojiList = [
     id: 1,
   },
   {
-    value: "😤",
+    value: "😠",
     id: 2,
   },
   {
-    value: "😠",
+    value: "😡",
     id: 3,
   },
   {
-    value: "😡",
-    id: 4,
-  },
-  {
     value: "🤬",
-    id: 5,
+    id: 4,
   },
 ];
 
 const CreatePostWizzard = () => {
   const [input, setInput] = useState<{ content: string; emoji: string }>({
     content: "",
-    emoji: "1",
+    emoji: "😐",
   });
   const [counter, setCounter] = useState<number>(input.content.length);
 
@@ -61,9 +57,9 @@ const CreatePostWizzard = () => {
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
-      console.log("zodError", errorMessage);
 
       if (errorMessage && errorMessage[0]) {
+        console.log("zodError", errorMessage[0]);
         toast.error(errorMessage[0]);
       } else {
         toast.error("Failed to post, try again later");
@@ -78,10 +74,12 @@ const CreatePostWizzard = () => {
   if (!user) return null;
 
   return (
-    <div className="flex w-full gap-2">
+    <div className="flex w-full items-center justify-center gap-1 md:gap-2">
       <Image
         src={user.profileImageUrl}
-        className="h-16 w-16 rounded-full"
+        className={`h-12 w-12 rounded-full md:h-16 md:w-16 ${
+          input.content ? "hidden md:flex" : ""
+        }`}
         alt="Your profile photo"
         width={48}
         height={48}
@@ -110,45 +108,49 @@ const CreatePostWizzard = () => {
         }}
       />
       {input.content !== "" && !isPosting ? (
-        <div className="flex flex-col items-center gap-1 self-end">
-          <div className="flex rounded-lg bg-slate-600">
-            {emojiList.map((emoji) => (
+        <>
+          <div className="flex flex-col items-center gap-1 self-end">
+            <div className="m-auto flex flex-wrap justify-center rounded-lg bg-slate-600">
+              {emojiList.map((emoji) => (
+                <button
+                  key={emoji.id}
+                  className={`${
+                    emoji.value === input.emoji ? "rounded-md bg-slate-400" : ""
+                  }`}
+                  onClick={() =>
+                    setInput(
+                      (prev) =>
+                        (prev = {
+                          ...prev,
+                          emoji: emoji.value,
+                        })
+                    )
+                  }
+                >
+                  {emoji.value}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col items-center gap-1 md:flex-row">
               <button
-                key={emoji.id}
-                className={`${
-                  emoji.value === input.emoji ? "rounded-md bg-slate-400" : ""
-                }`}
+                className="m-auto rounded-md bg-slate-500 p-1 text-sm transition-all duration-300 hover:bg-slate-400 md:text-base"
                 onClick={() =>
-                  setInput(
-                    (prev) =>
-                      (prev = {
-                        ...prev,
-                        emoji: emoji.value,
-                      })
-                  )
+                  mutate({ content: input.content, emoji: input.emoji })
                 }
+                disabled={counter > maxInputLength || isPosting}
               >
-                {emoji.value}
+                Submit
               </button>
-            ))}
+              <p
+                className={`text-[10px] ${
+                  counter > maxInputLength ? "text-red-400" : ""
+                }`}
+              >
+                {counter}/{maxInputLength}
+              </p>
+            </div>
           </div>
-          <button
-            className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
-            onClick={() =>
-              mutate({ content: input.content, emoji: input.emoji })
-            }
-            disabled={counter > maxInputLength || isPosting}
-          >
-            Submit
-          </button>
-          <p
-            className={`text-xs ${
-              counter > maxInputLength ? "text-red-400" : ""
-            }`}
-          >
-            {counter} / {maxInputLength}
-          </p>
-        </div>
+        </>
       ) : null}
       {isPosting && (
         <div className="flex items-center justify-center">
@@ -192,7 +194,14 @@ export default function Home() {
           )}
           {isSignedIn && (
             <>
-              <SignOutButton />
+              <nav className="flex justify-start gap-2 text-xs ">
+                <div className=" flex w-16 justify-center rounded-md bg-slate-700 text-slate-200">
+                  <SignOutButton />
+                </div>
+                <span className="rounded-md bg-slate-700 p-1 text-slate-200">
+                  Edit a profile
+                </span>
+              </nav>
               <CreatePostWizzard />
             </>
           )}

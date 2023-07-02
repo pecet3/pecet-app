@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import PageLayout from "~/pages/layout";
 
 const ProfileFeed = (props: { userId: string }) => {
-  const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
+  const { data, isLoading, isError } = api.posts.getPostsByUserId.useQuery({
     userId: props.userId,
   });
   if (isLoading)
@@ -24,7 +24,13 @@ const ProfileFeed = (props: { userId: string }) => {
       </div>
     );
 
-  if (!data || data.length === 0) return <p>error</p>;
+  if (!data || data.length === 0)
+    return (
+      <p className="mt-12 flex items-center justify-center text-2xl">
+        There's nothing to show...
+      </p>
+    );
+  if (isError) return <p>something went wrong</p>;
   return (
     <div className="flex flex-col gap-2 border-t">
       {data?.map((fullpost) => (

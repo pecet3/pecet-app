@@ -26,7 +26,7 @@ const ProfileFeed = (props: { userId: string }) => {
     );
   }
 
-  if (!isError) {
+  if (isError) {
     return (
       <div className="mt-20 flex justify-center">
         <p>Ups something went wrong...</p>

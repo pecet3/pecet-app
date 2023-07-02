@@ -14,9 +14,36 @@ import PageLayout from "./layout";
 
 dayjs.extend(relativeTime);
 
+const emojiList = [
+  {
+    value: "😐",
+    id: 1,
+  },
+  {
+    value: "😤",
+    id: 2,
+  },
+  {
+    value: "😠",
+    id: 3,
+  },
+  {
+    value: "😡",
+    id: 4,
+  },
+  {
+    value: "🤬",
+    id: 5,
+  },
+];
+
 const CreatePostWizzard = () => {
-  const [input, setInput] = useState<string>("");
-  const [counter, setCounter] = useState<number>(input.length);
+  const [input, setInput] = useState<{ content: string; emoji: string }>({
+    content: "",
+    emoji: "1",
+  });
+  const [counter, setCounter] = useState<number>(input.content.length);
+
   const maxInputLength = 280;
 
   const { user } = useUser();
@@ -25,7 +52,10 @@ const CreatePostWizzard = () => {
 
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: () => {
-      setInput("");
+      setInput({
+        content: "",
+        emoji: "",
+      });
       void ctx.posts.getAll.invalidate();
       toast.success("You added a post!");
     },
@@ -42,7 +72,7 @@ const CreatePostWizzard = () => {
   });
 
   useEffect(() => {
-    setCounter(input.length);
+    setCounter(input.content.length);
   }, [input]);
 
   if (!user) return null;
@@ -60,22 +90,34 @@ const CreatePostWizzard = () => {
         placeholder="Type something"
         type="text"
         className="grow bg-transparent outline-none"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        value={input.content}
+        onChange={(e) =>
+          setInput({
+            content: e.target.value,
+            emoji: "1",
+          })
+        }
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
-            if (input !== "") {
-              mutate({ content: input });
+            if (input.content !== "") {
+              mutate({ content: input.content, emoji: input.emoji });
             }
           }
         }}
       />
-      {input !== "" && !isPosting ? (
+      {input.content !== "" && !isPosting ? (
         <div className="flex flex-col items-center self-end">
+          <div className="flex">
+            {emojiList.map((emoji) => (
+              <button key={emoji.id}>{emoji.value}</button>
+            ))}
+          </div>
           <button
             className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
-            onClick={() => mutate({ content: input })}
+            onClick={() =>
+              mutate({ content: input.content, emoji: input.emoji })
+            }
             disabled={counter > maxInputLength || isPosting}
           >
             Submit

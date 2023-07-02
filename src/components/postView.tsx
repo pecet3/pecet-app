@@ -15,12 +15,11 @@ type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 export const PostView = ({ post, author }: PostWithUser) => {
   const { user } = useUser();
   const ctx = api.useContext();
-  const { push } = useRouter();
 
   const { mutate, isLoading: isDeleting } = api.posts.delete.useMutation({
     onSuccess: () => {
       void ctx.posts.getAll.invalidate();
-      push("/");
+
       toast.success("You deleted the post!");
     },
     onError: (e) => {

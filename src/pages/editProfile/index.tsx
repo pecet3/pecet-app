@@ -29,9 +29,6 @@ const EditProfilePage = () => {
           description: "",
         });
         toast.success("You eddited your profile!");
-        setTimeout(() => {
-          push("/");
-        }, 1500);
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -69,7 +66,9 @@ const EditProfilePage = () => {
               "write rour description"
             }
           ></textarea>
-          <p>{counter}/{maxLength}</p>
+          <p>
+            {counter}/{maxLength}
+          </p>
           <div className="flex">
             <button
               onClick={() =>

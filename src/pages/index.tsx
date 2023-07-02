@@ -92,10 +92,13 @@ const CreatePostWizzard = () => {
         className="grow bg-transparent outline-none"
         value={input.content}
         onChange={(e) =>
-          setInput({
-            content: e.target.value,
-            emoji: "1",
-          })
+          setInput(
+            (prev) =>
+              (prev = {
+                ...prev,
+                content: e.target.value,
+              })
+          )
         }
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -107,10 +110,26 @@ const CreatePostWizzard = () => {
         }}
       />
       {input.content !== "" && !isPosting ? (
-        <div className="flex flex-col items-center self-end">
-          <div className="flex">
+        <div className="flex flex-col items-center gap-1 self-end">
+          <div className="flex rounded-lg bg-slate-600">
             {emojiList.map((emoji) => (
-              <button key={emoji.id}>{emoji.value}</button>
+              <button
+                key={emoji.id}
+                className={`${
+                  emoji.value === input.emoji ? "rounded-md bg-slate-400" : ""
+                }`}
+                onClick={() =>
+                  setInput(
+                    (prev) =>
+                      (prev = {
+                        ...prev,
+                        emoji: emoji.value,
+                      })
+                  )
+                }
+              >
+                {emoji.value}
+              </button>
             ))}
           </div>
           <button

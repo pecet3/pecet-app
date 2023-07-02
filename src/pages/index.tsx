@@ -8,6 +8,7 @@ import { api } from "~/utils/api";
 import { PostView } from "~/components/postView";
 import { toast } from "react-hot-toast";
 import { LoadingSpinner, LoadingFullPage } from "../components/loading";
+import { BiLogoPostgresql } from "react-icons/bi";
 import PageLayout from "./layout";
 
 dayjs.extend(relativeTime);
@@ -73,7 +74,7 @@ const CreatePostWizzard = () => {
 
   return (
     <div className="flex w-full items-center justify-center gap-1 md:gap-2">
-      <Link href={`/${user.username ?? ""}`}>
+      <Link href={`/@${user.username ?? ""}`}>
         <Image
           src={user.profileImageUrl}
           className={`mt-1 h-12 w-12 rounded-full md:h-16 md:w-16 ${
@@ -199,8 +200,10 @@ export default function Home() {
                   <SignOutButton />
                 </div>
                 <span className="rounded-md bg-slate-700 p-1 text-slate-200">
-                  Edit a profile
+                  <Link href="/editProfile">Edit a profile</Link>
                 </span>
+
+                <BiLogoPostgresql size={24} />
               </nav>
               <CreatePostWizzard />
             </>

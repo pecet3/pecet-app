@@ -8,10 +8,9 @@ dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
 export const PostView = ({ post, author }: PostWithUser) => {
-  console.log(author);
   return (
-    <div className="flex gap-2 border-b p-2">
-      <Link href={`/@${author.username}`}>
+    <div className="flex justify-start gap-2 border-b p-2">
+      <Link href={`/@${author.username}`} className="">
         <Image
           src={author.profilePicture}
           alt={`@${author.username}'s avatar`}
@@ -31,7 +30,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
             ).fromNow()}`}</span>
           </Link>
         </div>
-        <Link href={`/post/${post.id}`}>
+        <Link href={`/post/${post.id}`} className="max-w-xs md:max-w-xl">
           <span className="text-lg">{post.content}</span>
         </Link>
       </div>

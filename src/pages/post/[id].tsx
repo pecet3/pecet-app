@@ -48,7 +48,7 @@ const PostPage: NextPage = () => {
         <meta name="description" content="pecet app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="background flex h-screen items-center justify-center">
+      {/* <main className="background flex h-screen items-center justify-center">
         <div className="flex items-center gap-1 rounded-lg bg-emerald-700 p-2 md:gap-4 md:p-4">
           <Link
             href={`/@${author.username}`}
@@ -68,13 +68,20 @@ const PostPage: NextPage = () => {
               <span className="font-thin">{`∙ ${dayjs(
                 post.createdAt
               ).fromNow()}`}</span>
+              <span className="font-thin">{`- ${post.emoji}`}</span>
             </div>
-            <span className="text-md max-w-[18rem] break-words md:max-w-xl md:text-4xl">
+            <span className="text-md ml-2 max-w-[18rem] break-words md:max-w-xl md:text-4xl">
               {post.content}
             </span>
           </div>
         </div>
-      </main>
+       
+      </main> */}
+
+      <PageLayout>
+        <PostView author={author} post={post} />
+        <p>comments</p>
+      </PageLayout>
     </>
   );
 };
@@ -83,6 +90,8 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import superjson from "superjson";
 import { prisma } from "../../server/db";
+import { PostView } from "~/components/postView";
+import PageLayout from "~/pages/layout";
 
 export async function getStaticProps(
   context: GetStaticPropsContext<{ id: string }>

@@ -4,10 +4,33 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import { RouterOutputs } from "../utils/api";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
+import { api } from "~/utils/api";
+import { toast } from "react-hot-toast";
+
 dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
 export const PostView = ({ post, author }: PostWithUser) => {
+  const { user } = useUser();
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isDeleting } = api.posts.delete.useMutation({
+    onSuccess: () => {
+      void ctx.posts.getAll.invalidate();
+      toast.success("You deleted the post!");
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+
+      if (errorMessage && errorMessage[0]) {
+        console.log("zodError", errorMessage[0]);
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post, try again later");
+      }
+    },
+  });
   return (
     <div className="flex justify-start gap-2 border-b p-1 md:p-2">
       <Link href={`/@${author.username}`} className="">
@@ -29,15 +52,27 @@ export const PostView = ({ post, author }: PostWithUser) => {
               post.createdAt
             ).fromNow()}`}</span>
           </Link>
+          {user?.id === post.authorId ? (
+            <button
+              className="text-xs text-red-700"
+              onClick={() => {
+                mutate({ postId: post.id, authorId: author.id });
+              }}
+            >
+              <i className="font-thin text-slate-200">{`∙`}</i>❌delete
+            </button>
+          ) : null}
         </div>
         <Link
           href={`/post/${post.id}`}
-          className="max-w-[15rem] grow sm:max-w-sm"
+          className="max-w-[15rem] grow sm:max-w-md md:max-w-lg"
         >
           <span className=" break-words text-base md:text-lg">
             {post.content}
           </span>
-          <span className="mx-1 text-xl">{`- ${post.emoji ?? "😐"}`}</span>
+          <span className="mx-1 text-xl font-bold text-slate-400">{` ∙ ${
+            post.emoji ?? "😐"
+          }`}</span>
         </Link>
       </div>
     </div>

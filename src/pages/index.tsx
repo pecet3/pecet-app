@@ -77,7 +77,7 @@ const CreatePostWizzard = () => {
     <div className="flex w-full items-center justify-center gap-1 md:gap-2">
       <Image
         src={user.profileImageUrl}
-        className={`h-12 w-12 rounded-full md:h-16 md:w-16 ${
+        className={`mt-1 h-12 w-12 rounded-full md:h-16 md:w-16 ${
           input.content ? "hidden md:flex" : ""
         }`}
         alt="Your profile photo"

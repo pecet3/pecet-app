@@ -41,8 +41,6 @@ const CreatePostWizzard = () => {
     },
   });
 
-  console.log(user);
-
   useEffect(() => {
     setCounter(input.length);
   }, [input]);
@@ -78,13 +76,13 @@ const CreatePostWizzard = () => {
           <button
             className="m-auto rounded-md bg-slate-500 p-1 transition-all duration-300 hover:bg-slate-400"
             onClick={() => mutate({ content: input })}
-            disabled={counter >= maxInputLength || isPosting}
+            disabled={counter > maxInputLength || isPosting}
           >
             Submit
           </button>
           <p
             className={`text-xs ${
-              counter >= maxInputLength ? "text-red-400" : ""
+              counter > maxInputLength ? "text-red-400" : ""
             }`}
           >
             {counter} / {maxInputLength}

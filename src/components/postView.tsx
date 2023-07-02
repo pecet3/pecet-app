@@ -9,12 +9,12 @@ type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
 export const PostView = ({ post, author }: PostWithUser) => {
   return (
-    <div className="flex justify-start gap-2 border-b p-2">
-      <Link href={`/@${author.username}`} className="w-12">
+    <div className="flex justify-start gap-2 border-b p-1 md:p-2">
+      <Link href={`/@${author.username}`} className="">
         <Image
           src={author.profilePicture}
           alt={`@${author.username}'s avatar`}
-          className="h-12 w-12 rounded-full"
+          className="h-10 w-10 rounded-full md:h-12 md:w-12"
           width={48}
           height={48}
         />
@@ -28,11 +28,16 @@ export const PostView = ({ post, author }: PostWithUser) => {
             <span className="font-thin">{`∙ ${dayjs(
               post.createdAt
             ).fromNow()}`}</span>
-            <span className="mx-1">{`- ${post.emoji}`}</span>
           </Link>
         </div>
-        <Link href={`/post/${post.id}`} className="max-w-xs sm:max-w-xl">
-          <span className="text-lg">{post.content}</span>
+        <Link
+          href={`/post/${post.id}`}
+          className="max-w-[15rem] grow sm:max-w-sm"
+        >
+          <span className=" break-words text-base md:text-lg">
+            {post.content}
+          </span>
+          <span className="mx-1 text-xl">{`- ${post.emoji}`}</span>
         </Link>
       </div>
     </div>

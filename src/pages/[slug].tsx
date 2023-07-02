@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import type {
-  GetStaticPropsContext,
-  NextPage,
-  InferGetStaticPropsType,
-} from "next";
+import type { GetStaticPropsContext, NextPage } from "next";
 import { api } from "~/utils/api";
 import { prisma } from "~/server/db";
-import { RouterOutputs } from "../utils/api";
-import { toast } from "react-hot-toast";
 import { LoadingFullPage, LoadingSpinner } from "~/components/loading";
 import { useRouter } from "next/router";
 import PageLayout from "~/pages/layout";
@@ -24,22 +18,31 @@ const ProfileFeed = (props: { userId: string }) => {
       </div>
     );
 
-  if (!data || data.length === 0)
+  if (!data || data.length === 0) {
     return (
-      <p className="mt-12 flex items-center justify-center text-2xl">
-        There's nothing to show...
-      </p>
+      <div className="mt-20 flex justify-center">
+        <p>There is nothing to show...</p>
+      </div>
     );
-  if (isError) return <p>something went wrong</p>;
+  }
+
+  if (!isError) {
+    return (
+      <div className="mt-20 flex justify-center">
+        <p>Ups something went wrong...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2 border-t">
-      {data?.map((fullpost) => (
+      {data.map((fullpost) => (
         <PostView
           post={fullpost.post}
           author={fullpost.author}
           key={fullpost.post.id}
         />
-      ))}
+      )) ?? null}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
@@ -14,11 +15,13 @@ type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 export const PostView = ({ post, author }: PostWithUser) => {
   const { user } = useUser();
   const ctx = api.useContext();
+  const { push } = useRouter();
 
   const { mutate, isLoading: isDeleting } = api.posts.delete.useMutation({
     onSuccess: () => {
       void ctx.posts.getAll.invalidate();
-      toast.success("You deleted the post!");
+      push("/");
+      toast.success("You deleted a post!");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -27,7 +30,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
         console.log("zodError", errorMessage[0]);
         toast.error(errorMessage[0]);
       } else {
-        toast.error("Failed to post, try again later");
+        toast.error("Failed to delete a post, try again later");
       }
     },
   });

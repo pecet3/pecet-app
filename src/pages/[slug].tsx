@@ -14,11 +14,9 @@ import { useRouter } from "next/router";
 import PageLayout from "~/pages/layout";
 
 const ProfileFeed = (props: { userId: string }) => {
-  console.log(props.userId);
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
     userId: props.userId,
   });
-  console.log(data);
   if (isLoading)
     return (
       <div className="mt-28 flex items-center justify-center">
@@ -42,7 +40,7 @@ const ProfileFeed = (props: { userId: string }) => {
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const router = useRouter();
-  console.log(username, "username");
+
   const name = router.query.slug as string;
 
   const parsedName = name.toString().replace("@", "");

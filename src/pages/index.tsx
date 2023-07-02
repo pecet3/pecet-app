@@ -51,7 +51,7 @@ const CreatePostWizzard = () => {
         emoji: "😐",
       });
       void ctx.posts.getAll.invalidate();
-      toast.success("You added a post!");
+      toast.success("You added the post!");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -60,7 +60,7 @@ const CreatePostWizzard = () => {
         console.log("zodError", errorMessage[0]);
         toast.error(errorMessage[0]);
       } else {
-        toast.error("Failed to post, try again later");
+        toast.error("You can add one post per hour");
       }
     },
   });

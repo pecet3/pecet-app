@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
-import { RouterOutputs } from "../utils/api";
 import { PostView } from "~/components/postView";
 import { toast } from "react-hot-toast";
 import { LoadingSpinner, LoadingFullPage } from "../components/loading";
@@ -50,7 +48,7 @@ const CreatePostWizzard = () => {
     onSuccess: () => {
       setInput({
         content: "",
-        emoji: "",
+        emoji: "😐",
       });
       void ctx.posts.getAll.invalidate();
       toast.success("You added a post!");
@@ -75,15 +73,17 @@ const CreatePostWizzard = () => {
 
   return (
     <div className="flex w-full items-center justify-center gap-1 md:gap-2">
-      <Image
-        src={user.profileImageUrl}
-        className={`mt-1 h-12 w-12 rounded-full md:h-16 md:w-16 ${
-          input.content ? "hidden md:flex" : ""
-        }`}
-        alt="Your profile photo"
-        width={48}
-        height={48}
-      />
+      <Link href={`/${user.username}`}>
+        <Image
+          src={user.profileImageUrl}
+          className={`mt-1 h-12 w-12 rounded-full md:h-16 md:w-16 ${
+            input.content ? "hidden md:flex" : ""
+          }`}
+          alt="Your profile photo"
+          width={48}
+          height={48}
+        />
+      </Link>
       <input
         placeholder="Type something"
         type="text"

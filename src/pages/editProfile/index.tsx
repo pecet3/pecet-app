@@ -9,9 +9,17 @@ import PageLayout from "../layout";
 const EditProfilePage = () => {
   const { user } = useUser();
   const { push } = useRouter();
+  const [counter, setCounter] = useState(0);
+  const maxLength = 280;
+
   const [input, setInput] = useState({
     description: "",
   });
+
+  useEffect(() => {
+    setCounter(input.description.length);
+  }, [input]);
+
   const ctx = api.useContext();
 
   const { mutate, isLoading: isPosting } = api.profile.editMetadata.useMutation(
@@ -61,14 +69,17 @@ const EditProfilePage = () => {
               "write rour description"
             }
           ></textarea>
-          <button
-            onClick={() =>
-              mutate({ description: input.description, userId: user?.id })
-            }
-            className="m-auto rounded-md bg-slate-500 px-1"
-          >
-            Submit
-          </button>
+          <p>{counter}/{maxLength}</p>
+          <div className="flex">
+            <button
+              onClick={() =>
+                mutate({ description: input.description, userId: user?.id })
+              }
+              className="m-auto rounded-md bg-slate-500 px-1"
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
     </main>

@@ -37,7 +37,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
           <span className=" break-words text-base md:text-lg">
             {post.content}
           </span>
-          <span className="mx-1 text-xl">{`- ${post.emoji}`}</span>
+          <span className="mx-1 text-xl">{`- ${post.emoji ?? "😐"}`}</span>
         </Link>
       </div>
     </div>

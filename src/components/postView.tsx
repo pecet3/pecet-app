@@ -21,7 +21,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
     onSuccess: () => {
       void ctx.posts.getAll.invalidate();
       push("/");
-      toast.success("You deleted a post!");
+      toast.success("You deleted the post!");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;

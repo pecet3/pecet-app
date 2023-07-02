@@ -73,7 +73,7 @@ const CreatePostWizzard = () => {
 
   return (
     <div className="flex w-full items-center justify-center gap-1 md:gap-2">
-      <Link href={`/${user.username}`}>
+      <Link href={`/${user.username ?? ""}`}>
         <Image
           src={user.profileImageUrl}
           className={`mt-1 h-12 w-12 rounded-full md:h-16 md:w-16 ${

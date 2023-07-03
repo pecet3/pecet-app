@@ -21,11 +21,11 @@ export const ourFileRouter = {
         //     // Whatever is returned here is accessible in onUploadComplete as `metadata`
         //     return { userId: user.id };
         // })
-        .onUploadComplete(async ({ metadata, file }) => {
+        .onUploadComplete(({ metadata, file }) => {
             // This code RUNS ON YOUR SERVER after upload
             // console.log("Upload complete for userId:", metadata.userId);
 
-            await console.log("file url", file.url);
+            console.log("file url", file.url);
         }),
 } satisfies FileRouter;
 

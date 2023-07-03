@@ -56,12 +56,13 @@ export const PostView = ({ post, author }: PostWithUser) => {
           </Link>
           {user?.id === post.authorId ? (
             <button
-              className="text-xs text-red-700"
+              className="text-xs text-gray-500"
               onClick={() => {
                 mutate({ postId: post.id, authorId: author.id });
               }}
             >
-              <i className="font-thin text-slate-200">{`∙`}</i>❌delete
+              <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
+              ❌delete
             </button>
           ) : null}
         </div>

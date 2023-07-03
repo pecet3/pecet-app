@@ -67,7 +67,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <Link href="/">return to index</Link>
       </div>
     );
-
+  // https://images2.alphacoders.com/941/thumb-1920-941898.jpg
   if (!data) return <p>404</p>;
   return (
     <>
@@ -79,7 +79,10 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       <PageLayout>
         <div className="relative  flex h-60 flex-col bg-slate-800 p-0 ">
           <img
-            src="https://images2.alphacoders.com/941/thumb-1920-941898.jpg"
+            src={
+              data.backgroundImg ??
+              "https://images2.alphacoders.com/941/thumb-1920-941898.jpg"
+            }
             className="fill h-full bg-slate-800 ring-slate-800"
             alt="Your profile photo"
           />

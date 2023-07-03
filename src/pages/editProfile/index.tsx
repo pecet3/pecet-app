@@ -6,6 +6,7 @@ import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import PageLayout from "../layout";
 import { UploadDropzone, UploadButton } from "~/utils/uploadthing";
+import "@uploadthing/react/styles.css";
 
 const EditProfilePage = () => {
   const { user } = useUser();
@@ -116,12 +117,12 @@ const EditProfilePage = () => {
         <div className="flex flex-col items-center justify-center gap-1">
           <label
             htmlFor="description"
-            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            className="my-2 block text-sm font-medium text-gray-900 dark:text-white"
           >
-            Edit URL background img
+            Change your URL Image
           </label>
           <div className="flex gap-2">
-            <input
+            {/* <input
               type="text"
               onChange={(e) =>
                 setInput(
@@ -134,40 +135,28 @@ const EditProfilePage = () => {
               dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500
               dark:focus:ring-blue-500"
               placeholder="paste a URL "
-            />
+            /> */}
             <div className="flex">
-              <button
-                onClick={() =>
+              <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                  // Do something with the response
+                  // console.log("Files: ", res);
+                  // alert("Upload Completed");
+                  if (typeof res === "undefined") return;
+                  const url = res[0]?.fileUrl as string;
                   mutateBackground({
-                    backgroundImg: input.backgroundImg,
+                    backgroundImg: url,
                     userId: user?.id,
-                  })
-                }
-                className="m-auto rounded-md bg-slate-500 px-1"
-              >
-                Submit
-              </button>
+                  });
+                }}
+                onUploadError={(error: Error) => {
+                  // Do something with the error.
+                  alert(`ERROR! ${error.message}`);
+                }}
+              />
             </div>
           </div>
-
-          <UploadButton
-            endpoint="imageUploader"
-            onClientUploadComplete={(res) => {
-              // Do something with the response
-              console.log("Files: ", res);
-              alert("Upload Completed");
-              if (typeof res === "undefined") return;
-              const url = res[0]?.fileUrl as string;
-              mutateBackground({
-                backgroundImg: url,
-                userId: user?.id,
-              });
-            }}
-            onUploadError={(error: Error) => {
-              // Do something with the error.
-              alert(`ERROR! ${error.message}`);
-            }}
-          />
         </div>
       </div>
     </main>

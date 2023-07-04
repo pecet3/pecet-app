@@ -9,7 +9,7 @@ import { UploadDropzone, UploadButton } from "~/utils/uploadthing";
 import "@uploadthing/react/styles.css";
 import Head from "next/head";
 import Image from "next/image";
-import { BsFillArrowLeftCircleFill } from "react-icons/bs";
+import { FiEdit } from "react-icons/fi";
 import { BackArrow } from "../../components/backArrow";
 
 const EditProfilePage = () => {
@@ -99,6 +99,31 @@ const EditProfilePage = () => {
             className="fill h-full bg-slate-800 opacity-50 ring-slate-800 blur-sm"
             alt="Your profile photo"
           />
+          <div className="absolute right-0 top-6">
+            <div className="relative flex justify-center ">
+              <FiEdit size={32} className="absolute top-2" />
+              <div className="opacity-0">
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    // Do something with the response
+                    // console.log("Files: ", res);
+                    // alert("Upload Completed");
+                    if (typeof res === "undefined") return;
+                    const url = res[0]?.fileUrl as string;
+                    mutateBackground({
+                      backgroundImg: url,
+                      userId: user?.id,
+                    });
+                  }}
+                  onUploadError={(error: Error) => {
+                    // Do something with the error.
+                    alert(`ERROR! ${error.message}`);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
           <div className="absolute left-1/4 top-36 m-auto flex flex-col items-center justify-center self-start sm:left-8 md:left-2">
             <Image
               src={data.profilePicture}
@@ -111,8 +136,8 @@ const EditProfilePage = () => {
           </div>
           <BackArrow />
         </div>
-        <div className="m-auto mt-24 flex max-w-md p-2 text-sm sm:mb-12 sm:ml-48 sm:mt-4  md:text-base">
-          <div className="flex items-center justify-center gap-1">
+        <div className="m-auto mt-24 flex items-center justify-center p-2 text-sm sm:mb-12 sm:ml-48 sm:mt-4  md:text-base">
+          <div className="flex flex-col items-center justify-center gap-1">
             <div className="m-auto flex flex-col items-center justify-center">
               <label
                 htmlFor="description"
@@ -138,22 +163,23 @@ const EditProfilePage = () => {
                 }
               ></textarea>
             </div>
-            <div className="flex flex-col gap-1">
-              <p>
-                {counter}/{maxLength}
-              </p>
+            <div className="m-auto flex justify-around gap-1">
               <button
                 onClick={() =>
                   mutate({ description: input.description, userId: user?.id })
                 }
-                className="m-auto rounded-md bg-slate-500 px-1"
+                className="m-auto rounded-md bg-slate-500 px-2"
               >
                 Update
               </button>
+
+              <p>
+                {counter}/{maxLength}
+              </p>
             </div>
           </div>
         </div>
-        <div className="m-auto flex max-w-[14rem] flex-col items-center justify-center gap-1 rounded-lg bg-slate-500 bg-opacity-70 p-2 text-center">
+        {/* <div className="m-auto flex max-w-[14rem] flex-col items-center justify-center gap-1 rounded-lg bg-slate-500 bg-opacity-70 p-2 text-center">
           <span>Update your Background Image</span>
           <UploadButton
             endpoint="imageUploader"
@@ -173,7 +199,7 @@ const EditProfilePage = () => {
               alert(`ERROR! ${error.message}`);
             }}
           />
-        </div>
+        </div> */}
       </PageLayout>
     </>
 

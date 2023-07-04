@@ -32,8 +32,10 @@ export const profileRouter = createTRPCRouter({
         const userId = ctx.userId;
         if (userId !== input.userId) return new TRPCError({ code: "UNAUTHORIZED" })
 
-        const user = await clerkClient.users.updateUser(userId, { publicMetadata: { description: input.description } });
-        return user;
+        const user = await clerkClient.users.getUser(userId);
+
+        const updatedUser = await clerkClient.users.updateUser(userId, { ...user.publicMetadata, publicMetadata: { description: input.description } });
+        return updatedUser;
     }),
     updateBackground: privateProcedure.input(z.object({
         userId: z.string(),
@@ -41,10 +43,14 @@ export const profileRouter = createTRPCRouter({
 
     })).mutation(async ({ ctx, input }) => {
         const userId = ctx.userId;
+
+        const user = await clerkClient.users.getUser(userId);
+
+
         if (userId !== input.userId) return new TRPCError({ code: "UNAUTHORIZED" })
 
-        const user = await clerkClient.users.updateUser(userId, { publicMetadata: { backgroundImg: input.backgroundImg } });
-        return user;
+        const updatedUser = await clerkClient.users.updateUser(userId, { publicMetadata: { ...user.publicMetadata, backgroundImg: input.backgroundImg } });
+        return updatedUser;
     }),
 
     // getUserById: publicProcedure.input(z.object({userId: z.string()})).query()

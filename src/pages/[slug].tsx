@@ -91,8 +91,8 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
               src={data.profilePicture}
               className="h-44 w-44 rounded-full bg-slate-700 ring-2 ring-slate-700"
               alt="Your profile photo"
-              width={48}
-              height={48}
+              width={255}
+              height={255}
             />
             <p className="text-xl font-bold md:text-2xl">@{data.username}</p>
           </div>

@@ -182,7 +182,7 @@ const EditProfilePage = () => {
         </div>
         <Link
           href="/editProfile/details"
-          className="m-auto my-2 flex w-36 items-center justify-center gap-1 rounded-md bg-blue-600 p-1 text-xl duration-300 hover:rounded-lg hover:bg-blue-700"
+          className="m-auto my-4 flex w-36 items-center justify-center gap-1 rounded-md bg-blue-600 p-1 text-xl duration-300 hover:rounded-lg hover:bg-blue-700"
         >
           <FiEdit size={24} className="" /> Edit details
         </Link>

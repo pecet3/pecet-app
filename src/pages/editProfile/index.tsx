@@ -33,7 +33,7 @@ const EditProfilePage = () => {
     userId: user?.id as string,
   });
 
-  const { mutate: mutateBackground, isLoading } =
+  const { mutate: mutateDescriptionBackground } =
     api.profile.updateBackground.useMutation({
       onSuccess: () => {
         setInput(
@@ -57,7 +57,7 @@ const EditProfilePage = () => {
       },
     });
 
-  const { mutate, isLoading: isPosting } =
+  const { mutate: mutateDescription } =
     api.profile.updateDescription.useMutation({
       onSuccess: () => {
         setInput(
@@ -108,18 +108,14 @@ const EditProfilePage = () => {
                 <UploadButton
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
-                    // Do something with the response
-                    // console.log("Files: ", res);
-                    // alert("Upload Completed");
                     if (typeof res === "undefined") return;
                     const url = res[0]?.fileUrl as string;
-                    mutateBackground({
+                    mutateDescriptionBackground({
                       backgroundImg: url,
                       userId: user?.id,
                     });
                   }}
                   onUploadError={(error: Error) => {
-                    // Do something with the error.
                     alert(`ERROR! ${error.message}`);
                   }}
                 />
@@ -142,19 +138,15 @@ const EditProfilePage = () => {
                   <UploadButton
                     endpoint="imageUploader"
                     onClientUploadComplete={(res) => {
-                      // Do something with the response
-                      // console.log("Files: ", res);
-                      // alert("Upload Completed");
                       if (typeof res === "undefined") return;
                       const url = res[0]?.fileUrl as string;
-                      mutateBackground({
+                      mutateDescriptionBackground({
                         backgroundImg: url,
                         userId: user?.id,
                       });
                     }}
                     onUploadError={(error: Error) => {
-                      // Do something with the error.
-                      alert(`ERROR! ${error.message}`);
+                      toast.error(error.message);
                     }}
                   />
                 </div>
@@ -193,7 +185,10 @@ const EditProfilePage = () => {
             <div className="m-auto flex justify-around gap-1">
               <button
                 onClick={() =>
-                  mutate({ description: input.description, userId: user?.id })
+                  mutateDescription({
+                    description: input.description,
+                    userId: user?.id,
+                  })
                 }
                 className="ml-10 rounded-md bg-slate-500 px-2"
               >
@@ -206,116 +201,8 @@ const EditProfilePage = () => {
             </div>
           </div>
         </div>
-        {/* <div className="m-auto flex max-w-[14rem] flex-col items-center justify-center gap-1 rounded-lg bg-slate-500 bg-opacity-70 p-2 text-center">
-          <span>Update your Background Image</span>
-          <UploadButton
-            endpoint="imageUploader"
-            onClientUploadComplete={(res) => {
-              // Do something with the response
-              // console.log("Files: ", res);
-              // alert("Upload Completed");
-              if (typeof res === "undefined") return;
-              const url = res[0]?.fileUrl as string;
-              mutateBackground({
-                backgroundImg: url,
-                userId: user?.id,
-              });
-            }}
-            onUploadError={(error: Error) => {
-              // Do something with the error.
-              alert(`ERROR! ${error.message}`);
-            }}
-          />
-        </div> */}
       </PageLayout>
     </>
-
-    // <main className="background flex h-screen items-center justify-center">
-    //   <div className="flex flex-col items-center justify-center rounded-lg bg-slate-700 p-4">
-    // <div className="flex flex-col items-center justify-center gap-1">
-    //   <label
-    //     htmlFor="description"
-    //     className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-    //   >
-    //     Edit your description
-    //   </label>
-    //   <textarea
-    //     onChange={(e) =>
-    //       setInput(
-    //         (prev) => (prev = { ...prev, description: e.target.value })
-    //       )
-    //     }
-    //     id="description"
-    //     rows={4}
-    //     className="block w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm
-    //      text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700
-    //       dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500
-    //       dark:focus:ring-blue-500"
-    //     placeholder={
-    //       (user.publicMetadata.description as string) ||
-    //       "write rour description"
-    //     }
-    //   ></textarea>
-    //   <p>
-    //     {counter}/{maxLength}
-    //   </p>
-    //   <div className="flex">
-    //     <button
-    //       onClick={() =>
-    //         mutate({ description: input.description, userId: user?.id })
-    //       }
-    //       className="m-auto rounded-md bg-slate-500 px-1"
-    //     >
-    //       Submit
-    //     </button>
-    //   </div>
-    // </div>
-    //     <div className="flex flex-col items-center justify-center gap-1">
-    //       <label
-    //         htmlFor="description"
-    //         className="my -2 block text-sm font-medium text-gray-900 dark:text-white"
-    //       >
-    //         Change your URL Image
-    //       </label>
-    //       <div className="flex gap-2">
-    //         <input
-    //           type="text"
-    //           onChange={(e) =>
-    //             setInput(
-    //               (prev) => (prev = { ...prev, backgroundImg: e.target.value })
-    //             )
-    //           }
-    //           id="background-url"
-    //           className="block w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm
-    //          text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700
-    //           dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500
-    //           dark:focus:ring-blue-500"
-    //           placeholder="paste a URL "
-    //         />
-    //         <div className="flex">
-    // <UploadButton
-    //   endpoint="imageUploader"
-    //   onClientUploadComplete={(res) => {
-    //     // Do something with the response
-    //     // console.log("Files: ", res);
-    //     // alert("Upload Completed");
-    //     if (typeof res === "undefined") return;
-    //     const url = res[0]?.fileUrl as string;
-    //     mutateBackground({
-    //       backgroundImg: url,
-    //       userId: user?.id,
-    //     });
-    //   }}
-    //   onUploadError={(error: Error) => {
-    //     // Do something with the error.
-    //     alert(`ERROR! ${error.message}`);
-    //   }}
-    // />
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </main>
   );
 };
 

@@ -91,7 +91,9 @@ const EditProfilePage = () => {
       </Head>
       <PageLayout>
         <div className="relative  flex h-60 flex-col bg-slate-800 p-0 ">
-          <img
+          <Image
+            width={1200}
+            height={720}
             src={
               data.backgroundImg ??
               "https://images2.alphacoders.com/941/thumb-1920-941898.jpg"
@@ -129,8 +131,8 @@ const EditProfilePage = () => {
               src={data.profilePicture}
               className="h-44 w-44 rounded-full bg-slate-700 ring-2 ring-slate-700"
               alt="Your profile photo"
-              width={48}
-              height={48}
+              width={128}
+              height={128}
             />
             <p className="text-xl font-bold md:text-2xl">@{data.username}</p>
           </div>
@@ -153,10 +155,10 @@ const EditProfilePage = () => {
                 }
                 id="description"
                 rows={4}
-                className="block w-56 resize-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm
-             text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700
-              dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500
-              dark:focus:ring-blue-500"
+                className="block w-56 resize-none rounded-lg border  border-gray-600 bg-gray-700
+              p-2.5 text-sm
+              text-white placeholder-gray-400 focus:border-blue-500
+              focus:ring-blue-500"
                 placeholder={
                   (user.publicMetadata.description as string) ||
                   "write rour description"
@@ -168,7 +170,7 @@ const EditProfilePage = () => {
                 onClick={() =>
                   mutate({ description: input.description, userId: user?.id })
                 }
-                className="m-auto rounded-md bg-slate-500 px-2"
+                className="ml-10 rounded-md bg-slate-500 px-2"
               >
                 Update
               </button>

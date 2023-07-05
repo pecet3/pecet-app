@@ -34,7 +34,7 @@ export const profileRouter = createTRPCRouter({
 
         const user = await clerkClient.users.getUser(userId);
 
-        const updatedUser = await clerkClient.users.updateUser(userId, { ...user.publicMetadata, publicMetadata: { description: input.description } });
+        const updatedUser = await clerkClient.users.updateUser(userId, { publicMetadata: { ...user.publicMetadata, description: input.description } });
         return updatedUser;
     }),
     updateBackground: privateProcedure.input(z.object({

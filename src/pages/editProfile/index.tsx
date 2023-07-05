@@ -1,11 +1,10 @@
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import PageLayout from "../layout";
-import { UploadDropzone, UploadButton } from "~/utils/uploadthing";
+import { UploadButton } from "~/utils/uploadthing";
 import "@uploadthing/react/styles.css";
 import Head from "next/head";
 import Image from "next/image";
@@ -14,7 +13,6 @@ import { BackArrow } from "../../components/backArrow";
 
 const EditProfilePage = () => {
   const { user } = useUser();
-  const { push } = useRouter();
   const [counter, setCounter] = useState(0);
   const maxLength = 280;
 
@@ -33,8 +31,8 @@ const EditProfilePage = () => {
     userId: user?.id as string,
   });
 
-  const { mutate: mutateDescriptionBackground } =
-    api.profile.updateBackground.useMutation({
+  const { mutate: mutateBackground } = api.profile.updateBackground.useMutation(
+    {
       onSuccess: () => {
         setInput(
           (prev) =>
@@ -44,6 +42,7 @@ const EditProfilePage = () => {
             })
         );
         toast.success("You eddited your profile!");
+        void ctx.profile.getUserById.invalidate();
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -55,7 +54,8 @@ const EditProfilePage = () => {
           toast.error("Ups something went wrong");
         }
       },
-    });
+    }
+  );
 
   const { mutate: mutateDescription } =
     api.profile.updateDescription.useMutation({
@@ -103,14 +103,14 @@ const EditProfilePage = () => {
           />
           <div className="absolute right-0 top-6">
             <div className="relative flex justify-center ">
-              <FiEdit size={32} className="absolute top-2" />
+              <FiEdit size={32} className="absolute top-2 " />
               <div className="opacity-0">
                 <UploadButton
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     if (typeof res === "undefined") return;
                     const url = res[0]?.fileUrl as string;
-                    mutateDescriptionBackground({
+                    mutateBackground({
                       backgroundImg: url,
                       userId: user?.id,
                     });
@@ -125,33 +125,12 @@ const EditProfilePage = () => {
           <div className="absolute left-1/4 top-36 m-auto flex flex-col items-center justify-center self-start sm:left-8 md:left-2">
             <Image
               src={data.profilePicture}
-              className="blur- h-44 w-44 rounded-full bg-slate-700  opacity-50 ring-2 ring-slate-800"
+              className="h-44 w-44 rounded-full bg-slate-700 ring-2 ring-slate-800"
               alt="Your profile photo"
               width={128}
               height={128}
             />
             <p className="text-xl font-bold md:text-2xl">@{data.username}</p>
-            <div className="absolute right-3 top-14">
-              <div className="relative flex justify-center ">
-                <FiEdit size={32} className="absolute top-2" />
-                <div className="opacity-0">
-                  <UploadButton
-                    endpoint="imageUploader"
-                    onClientUploadComplete={(res) => {
-                      if (typeof res === "undefined") return;
-                      const url = res[0]?.fileUrl as string;
-                      mutateDescriptionBackground({
-                        backgroundImg: url,
-                        userId: user?.id,
-                      });
-                    }}
-                    onUploadError={(error: Error) => {
-                      toast.error(error.message);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
           </div>
           <BackArrow />
         </div>
@@ -160,7 +139,7 @@ const EditProfilePage = () => {
             <div className="m-auto flex flex-col items-center justify-center">
               <label
                 htmlFor="description"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                className="mt-4 block text-sm font-medium text-gray-900 dark:text-white"
               >
                 Edit your description
               </label>
@@ -201,6 +180,12 @@ const EditProfilePage = () => {
             </div>
           </div>
         </div>
+        <Link
+          href="/editProfile/details"
+          className="m-auto my-2 flex w-36 items-center justify-center gap-1 rounded-md bg-blue-600 p-1 text-xl duration-300 hover:rounded-lg hover:bg-blue-700"
+        >
+          <FiEdit size={24} className="" /> Edit details
+        </Link>
       </PageLayout>
     </>
   );

@@ -98,7 +98,7 @@ const EditProfilePage = () => {
               data.backgroundImg ??
               "https://images2.alphacoders.com/941/thumb-1920-941898.jpg"
             }
-            className="fill h-full bg-slate-800 opacity-50 ring-slate-800 blur-sm"
+            className="fill h-full bg-slate-800 opacity-75  blur-sm"
             alt="Your profile photo"
           />
           <div className="absolute right-0 top-6">
@@ -129,12 +129,37 @@ const EditProfilePage = () => {
           <div className="absolute left-1/4 top-36 m-auto flex flex-col items-center justify-center self-start sm:left-8 md:left-2">
             <Image
               src={data.profilePicture}
-              className="h-44 w-44 rounded-full bg-slate-700 ring-2 ring-slate-700"
+              className="blur- h-44 w-44 rounded-full bg-slate-700  opacity-50 ring-2 ring-slate-800"
               alt="Your profile photo"
               width={128}
               height={128}
             />
             <p className="text-xl font-bold md:text-2xl">@{data.username}</p>
+            <div className="absolute right-3 top-14">
+              <div className="relative flex justify-center ">
+                <FiEdit size={32} className="absolute top-2" />
+                <div className="opacity-0">
+                  <UploadButton
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res) => {
+                      // Do something with the response
+                      // console.log("Files: ", res);
+                      // alert("Upload Completed");
+                      if (typeof res === "undefined") return;
+                      const url = res[0]?.fileUrl as string;
+                      mutateBackground({
+                        backgroundImg: url,
+                        userId: user?.id,
+                      });
+                    }}
+                    onUploadError={(error: Error) => {
+                      // Do something with the error.
+                      alert(`ERROR! ${error.message}`);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <BackArrow />
         </div>

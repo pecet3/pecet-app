@@ -81,8 +81,8 @@ const CreatePostWizzard = () => {
             input.content ? "hidden md:flex" : ""
           }`}
           alt="Your profile photo"
-          width={48}
-          height={48}
+          width={64}
+          height={64}
         />
       </Link>
       <input

@@ -21,6 +21,7 @@ model Post {
 
 model Comment {
   id        String   @id @default(cuid())
+  authorId  String
   createdAt DateTime @default(now())
   content   String   @db.VarChar(280)
   postId    String

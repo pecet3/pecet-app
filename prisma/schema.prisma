@@ -9,11 +9,22 @@ datasource db {
 }
 
 model Post {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  content   String    @db.VarChar(280)
+  authorId  String
+  emoji     String?
+  comments  Comment[] @relation("PostToComment")
+
+  @@index([authorId])
+}
+
+model Comment {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   content   String   @db.VarChar(280)
-  authorId  String
-  emoji     String?
+  postId    String
+  post      Post     @relation("PostToComment", fields: [postId], references: [id])
 
-  @@index([authorId])
+  @@index([postId])
 }

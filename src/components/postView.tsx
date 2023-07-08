@@ -34,50 +34,58 @@ export const PostView = ({ post, author }: PostWithUser) => {
     },
   });
   return (
-    <div className="flex justify-start gap-2 border-b p-1 md:p-2">
-      <Link href={`/@${author.username}`} className="">
-        <Image
-          src={author.profilePicture}
-          alt={`@${author.username}'s avatar`}
-          className="h-10 w-10 rounded-full md:h-12 md:w-12"
-          width={48}
-          height={48}
-        />
-      </Link>
-      <div className="flex flex-col">
-        <div className="flex gap-1 text-sm text-slate-300">
-          <Link href={`/@${author.username}`}>
-            <span className="font-bold">{`@${author.username}`}</span>
-          </Link>
-          <Link href={`/post/${post.id}`}>
-            <span className="font-thin">{`∙ ${dayjs(
-              post.createdAt
-            ).fromNow()}`}</span>
-          </Link>
-          {user?.id === post.authorId ? (
-            <button
-              className="text-xs text-gray-500"
-              onClick={() => {
-                mutate({ postId: post.id, authorId: author.id });
-              }}
-            >
-              <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
-              ❌delete
-            </button>
-          ) : null}
-        </div>
-        <Link
-          href={`/post/${post.id}`}
-          className="max-w-[15rem] grow sm:max-w-md md:max-w-lg"
-        >
-          <span className=" break-words text-base md:text-lg">
-            {post.content}
-          </span>
-          <span className="mx-1 text-xl font-bold text-slate-400">{` ∙ ${
-            post.emoji ?? "😐"
-          }`}</span>
+    <div className="flex items-end border-b p-1">
+      <div className="flex justify-start gap-2 md:p-2">
+        <Link href={`/@${author.username}`} className="">
+          <Image
+            src={author.profilePicture}
+            alt={`@${author.username}'s avatar`}
+            className="h-10 w-10 rounded-full md:h-12 md:w-12"
+            width={48}
+            height={48}
+          />
         </Link>
+        <div className="flex flex-col">
+          <div className="flex gap-1 text-sm text-slate-300">
+            <Link href={`/@${author.username}`}>
+              <span className="font-bold">{`@${author.username}`}</span>
+            </Link>
+            <Link href={`/post/${post.id}`}>
+              <span className="font-thin">{`∙ ${dayjs(
+                post.createdAt
+              ).fromNow()}`}</span>
+            </Link>
+            {user?.id === post.authorId ? (
+              <button
+                className="text-xs text-gray-500"
+                onClick={() => {
+                  mutate({ postId: post.id, authorId: author.id });
+                }}
+              >
+                <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
+                ❌delete
+              </button>
+            ) : null}
+          </div>
+          <Link
+            href={`/post/${post.id}`}
+            className="max-w-[15rem] grow sm:max-w-md md:max-w-lg"
+          >
+            <span className=" break-words text-base md:text-lg">
+              {post.content}
+            </span>
+            <span className="mx-1 text-xl font-bold text-slate-400">{` ∙ ${
+              post.emoji ?? "😐"
+            }`}</span>
+          </Link>
+        </div>
       </div>
+      <Link
+        href={`/post/${post.id}`}
+        className="max-w-[15rem] grow sm:max-w-md md:max-w-lg"
+      >
+        <p className="text-right">Comments({post.comments.length})</p>
+      </Link>
     </div>
   );
 };

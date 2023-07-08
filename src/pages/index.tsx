@@ -164,6 +164,7 @@ const CreatePostWizzard = () => {
 
 const Feed = () => {
   const { data, isLoading: postLoading } = api.posts.getAll.useQuery();
+  console.log(data);
   if (postLoading) return <LoadingFullPage />;
   if (!data) return <div>Ups...Something went wrong</div>;
   return (

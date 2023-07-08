@@ -38,14 +38,36 @@ const addUserDataToPosts = async (posts: Post[]) => {
         //   }
         //   author.username = author.externalUsername;
         // }
+
         return {
-            post,
+            post: {
+                ...post,
+                comments: post.comments.map(comment => {
+                    const commentAuthor = users.find((user) => user.id === comment.authorId)
+                    return {
+                        ...comment,
+                        commentAuthor
+                    }
+                }),
+            },
             author: {
                 ...author,
-                username: author.username ?? "(username not found)",
-            },
-        };
+                username: author.username
+            }
+        }
     });
+}
+
+const addUserDataToComment = (comments: Comment[]) => {
+    return comments.map(async (comment) => {
+        const user = await clerkClient.users.getUser(
+            "user_2S1y7jGGuudf4tZAsMMWx7Z1B0P"
+        )
+        return {
+            ...comment,
+            user
+        }
+    })
 }
 
 // Create a new ratelimiter, that allows 1 requests per 60 minutes
@@ -77,14 +99,13 @@ export const postsRouter = createTRPCRouter({
         return posts.map((post) => {
             const author = users.find((user) => user.id === post.authorId)
 
-            const commentAuthor = users.find((user) => user.id === post.comments[0]?.authorId)
 
             if (!author || !author.username) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author not found" })
             return {
                 post: {
                     ...post,
                     comments: post.comments.map(comment => {
-                        const commentAuthor = users.find((user) => user.id === post.comments[0]?.authorId)
+                        const commentAuthor = users.find((user) => user.id === comment.authorId)
                         return {
                             ...comment,
                             commentAuthor
@@ -129,13 +150,20 @@ export const postsRouter = createTRPCRouter({
 
         if (authorId !== input.authorId) return new TRPCError({ code: "UNAUTHORIZED" })
 
-        const deletedUser = await ctx.prisma.post.delete({
+        const deleteComments = await ctx.prisma.comment.deleteMany({
+            where: {
+                postId:
+                    input.postId
+            }
+        });
+
+        const deletedPost = await ctx.prisma.post.delete({
             where: {
                 id: input.postId
-            }
+            },
         })
 
-        return deletedUser
+        return [deletedPost, deleteComments]
 
     })
 
@@ -149,7 +177,10 @@ export const postsRouter = createTRPCRouter({
                 authorId: input.userId
             },
             take: 100,
-            orderBy: [{ createdAt: "desc" }]
+            orderBy: [{ createdAt: "desc" }],
+            include: {
+                comments: true
+            }
 
         }).then(addUserDataToPosts)
         return posts
@@ -160,6 +191,9 @@ export const postsRouter = createTRPCRouter({
         const post = await ctx.prisma.post.findMany({
             where: {
                 id: input.postId
+            },
+            include: {
+                comments: true
             },
             take: 1
         }).then(addUserDataToPosts)
@@ -181,6 +215,9 @@ export const postsRouter = createTRPCRouter({
                         authorId: input.userId,
                     },
                     take: 100,
+                    include: {
+                        comments: true
+                    },
                     orderBy: [{ createdAt: "desc" }],
                 }).then(addUserDataToPosts)
 

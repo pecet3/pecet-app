@@ -78,7 +78,7 @@ const ratelimit = new Ratelimit({
 });
 
 const filterUserForClient = (user: User) => {
-    return { id: user.id, username: user.username, profilePicture: user.profileImageUrl }
+    return { id: user.id, username: user.username as string, profilePicture: user.profileImageUrl }
 }
 
 export const postsRouter = createTRPCRouter({

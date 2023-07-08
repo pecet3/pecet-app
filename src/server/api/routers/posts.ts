@@ -64,6 +64,9 @@ export const postsRouter = createTRPCRouter({
         const posts = await ctx.prisma.post.findMany({
             orderBy: [{ createdAt: "desc" }],
             take: 100,
+            include: {
+                comments: true
+            }
         });
 
         const users = (await clerkClient.users.getUserList({
@@ -73,9 +76,18 @@ export const postsRouter = createTRPCRouter({
 
         return posts.map((post) => {
             const author = users.find((user) => user.id === post.authorId)
+
+            const commentAuthor = users.find((user) => user.id === post.comments[0]?.authorId)
+
             if (!author || !author.username) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author not found" })
             return {
-                post,
+                post: {
+                    ...post,
+                    comments: {
+                        ...post.comments,
+                        commentAuthor
+                    },
+                },
                 author: {
                     ...author,
                     username: author.username

@@ -51,7 +51,7 @@ const PostPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PageLayout>
-        <div className="flex items-end border-b p-1">
+        <div className="flex items-end border-b bg-slate-900 p-1">
           <div className="flex justify-start gap-2 md:p-2">
             <Link href={`/@${author.username}`} className="">
               <Image
@@ -96,8 +96,61 @@ const PostPage: NextPage = () => {
           </div>
         </div>
         <div>
+          <p className="flex justify-center border-b py-1 text-xs font-extralight">
+            Comments
+          </p>
           {comments?.map((comment) => {
-            return <p key={comment.id}>{comment.content}</p>;
+            return (
+              <div
+                key={comment.id}
+                className="flex items-end border-b bg-slate-700 p-1"
+              >
+                <div className="flex justify-start gap-2 md:p-2">
+                  <Link
+                    href={`/@${comment?.commentAuthor?.username}`}
+                    className=""
+                  >
+                    <Image
+                      src={comment?.commentAuthor?.profilePicture || ""}
+                      alt={`@${comment?.commentAuthor?.username}'s avatar`}
+                      className="h-10 w-10 rounded-full md:h-12 md:w-12"
+                      width={48}
+                      height={48}
+                    />
+                  </Link>
+                  <div className="flex flex-col">
+                    <div className="flex gap-1 text-sm text-slate-300">
+                      <Link href={`/@${comment?.commentAuthor?.username}`}>
+                        <span className="font-bold">{`@${comment?.commentAuthor?.username}`}</span>
+                      </Link>
+                      <span className="font-thin">{`∙ ${dayjs(
+                        comment.createdAt
+                      ).fromNow()}`}</span>
+
+                      {user?.id === comment?.authorId ? (
+                        <button
+                          className="text-xs text-gray-500"
+                          onClick={() => {
+                            mutateDelete({
+                              postId: post.id,
+                              authorId: author.id,
+                            });
+                          }}
+                        >
+                          <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
+                          ❌delete
+                        </button>
+                      ) : null}
+                    </div>
+                    <div className="max-w-[15rem] grow sm:max-w-md md:max-w-lg">
+                      <span className=" break-words text-base md:text-lg">
+                        {comment.content}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
           })}
         </div>
       </PageLayout>
@@ -109,7 +162,6 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import superjson from "superjson";
 import { prisma } from "../../server/db";
-import { PostView } from "~/components/postView";
 import PageLayout from "~/pages/layout";
 
 export async function getStaticProps(

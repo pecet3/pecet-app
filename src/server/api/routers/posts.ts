@@ -83,10 +83,13 @@ export const postsRouter = createTRPCRouter({
             return {
                 post: {
                     ...post,
-                    comments: {
-                        ...post.comments,
-                        commentAuthor
-                    },
+                    comments: post.comments.map(comment => {
+                        const commentAuthor = users.find((user) => user.id === post.comments[0]?.authorId)
+                        return {
+                            ...comment,
+                            commentAuthor
+                        }
+                    }),
                 },
                 author: {
                     ...author,

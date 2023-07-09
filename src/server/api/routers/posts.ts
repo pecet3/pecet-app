@@ -75,7 +75,8 @@ export const postsRouter = createTRPCRouter({
             orderBy: [{ createdAt: "desc" }],
             take: 100,
             include: {
-                comments: true
+                comments: true,
+
             }
         });
 
@@ -181,6 +182,29 @@ export const postsRouter = createTRPCRouter({
     })
 
     ,
+
+    deleteComment: privateProcedure.input(z.object({
+        commentId: z.string(),
+        authorId: z.string()
+    })).mutation(async ({ ctx, input }) => {
+        const authorId = ctx.userId
+
+        if (authorId !== input.authorId) return new TRPCError({ code: "UNAUTHORIZED" })
+
+        const deletedComments = await ctx.prisma.comment.delete({
+            where: {
+                id:
+                    input.commentId
+            }
+        });
+
+
+        return deletedComments
+
+    })
+
+    ,
+
 
     getPostsById: publicProcedure.input(z.object({
         userId: z.string(),

@@ -168,7 +168,7 @@ const Feed = () => {
   if (postLoading) return <LoadingFullPage />;
   if (!data) return <div>Ups...Something went wrong</div>;
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col">
       {data?.map((fullPost) => (
         <PostView
           post={fullPost.post}

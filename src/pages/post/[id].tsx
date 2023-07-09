@@ -91,7 +91,8 @@ const PostPage: NextPage = () => {
   if (
     !userLoaded ||
     typeof author === "undefined" ||
-    typeof post === "undefined"
+    typeof post === "undefined" ||
+    typeof comments === "undefined"
   )
     return <LoadingFullPage />;
 

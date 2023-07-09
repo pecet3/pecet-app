@@ -10,6 +10,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { FiEdit } from "react-icons/fi";
 import { BackArrow } from "../../components/backArrow";
+import { LoadingFullPage } from "~/components/loading";
 
 const EditProfilePage = () => {
   const { user } = useUser();
@@ -27,7 +28,7 @@ const EditProfilePage = () => {
 
   const ctx = api.useContext();
 
-  const { data } = api.profile?.getUserById.useQuery({
+  const { data, isLoading } = api.profile.getUserById.useQuery({
     userId: user?.id as string,
   });
 
@@ -41,6 +42,7 @@ const EditProfilePage = () => {
               backgroundImg: "",
             })
         );
+
         toast.success("You eddited your profile!");
         void ctx.profile.getUserById.invalidate();
       },
@@ -80,8 +82,8 @@ const EditProfilePage = () => {
         }
       },
     });
-  if (!user) return <p>Unauthorized</p>;
-  if (!data) return <p>Error</p>;
+  if (!user) return null;
+  if (isLoading || !data) return <LoadingFullPage />;
   return (
     <>
       <Head>

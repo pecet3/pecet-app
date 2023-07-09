@@ -58,22 +58,10 @@ const addUserDataToPosts = async (posts: Post[]) => {
     });
 }
 
-const addUserDataToComment = (comments: Comment[]) => {
-    return comments.map(async (comment) => {
-        const user = await clerkClient.users.getUser(
-            "user_2S1y7jGGuudf4tZAsMMWx7Z1B0P"
-        )
-        return {
-            ...comment,
-            user
-        }
-    })
-}
-
-// Create a new ratelimiter, that allows 1 requests per 60 minutes
+// Create a new ratelimiter, that allows 3 requests per 60 seconds
 const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(20, "60 m"),
+    limiter: Ratelimit.slidingWindow(3, "60 s"),
     analytics: true,
 });
 
@@ -142,6 +130,31 @@ export const postsRouter = createTRPCRouter({
             })
             return post
         }),
+    addComment: privateProcedure.input(z.object({
+        postId: z.string(),
+        content: z.string().min(1).max(280)
+    })).mutation(async ({ ctx, input }) => {
+        const authorId = ctx.userId;
+
+        const { success } = await ratelimit.limit(authorId)
+
+        if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" })
+
+
+        const comment = await ctx.prisma.comment.create({
+            data: {
+                authorId,
+                content: input.content,
+                postId: input.postId
+            }
+        })
+
+        return comment
+    })
+
+    ,
+
+
     delete: privateProcedure.input(z.object({
         postId: z.string(),
         authorId: z.string()

@@ -24,9 +24,13 @@ const PostPage: NextPage = () => {
 
   const [counter, setCounter] = useState(0);
 
-  const maxContentLength = 280;
+  const ctx = api.useContext();
 
-  const [addComment, setAddComment] = useState(false);
+  useEffect(() => {
+    setCounter(input.content.length);
+  }, [input.content]);
+
+  const maxContentLength = 280;
 
   const postId = router.query.id?.toString();
 
@@ -39,9 +43,20 @@ const PostPage: NextPage = () => {
     postId: postId,
   });
 
-  const { mutate: mutateDelete } = api.posts.delete.useMutation({
+  const { mutate: mutateDeletePost } = api.posts.delete.useMutation({
     onSuccess: () => {
-      toast.success("You deleted the post!");
+      toast.success("You deleted a post!");
+      void ctx.posts.getPostById.invalidate();
+    },
+    onError: (e) => {
+      toast.error("Ups...something went wrong");
+    },
+  });
+
+  const { mutate: mutateDeleteComment } = api.posts.deleteComment.useMutation({
+    onSuccess: () => {
+      toast.success("You deleted a comment!");
+      void ctx.posts.getPostById.invalidate();
     },
     onError: (e) => {
       toast.error("Ups...something went wrong");
@@ -53,8 +68,8 @@ const PostPage: NextPage = () => {
       setInput({
         content: "",
       });
-      // void ctx.posts.getAll.invalidate();
-      toast.success("You added the comment!");
+      void ctx.posts.getPostById.invalidate();
+      toast.success("You added a comment!");
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -112,7 +127,10 @@ const PostPage: NextPage = () => {
                   <button
                     className="text-xs text-gray-500"
                     onClick={() => {
-                      mutateDelete({ postId: post.id, authorId: author.id });
+                      mutateDeletePost({
+                        postId: post.id,
+                        authorId: author.id,
+                      });
                     }}
                   >
                     <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
@@ -132,43 +150,32 @@ const PostPage: NextPage = () => {
           </div>
         </div>
         <div>
-          <div className="flex justify-around border-b">
-            <button
-              className="flex items-center gap-1"
-              onClick={() => setAddComment(true)}
-            >
-              <BsPlusCircle size={18} />
-              Add a Comment
-            </button>
-          </div>
-          {addComment ? (
-            <div className="flex flex-col items-center gap-1 self-end">
-              <div className="flex flex-col items-center gap-1 md:flex-row">
-                <input
-                  placeholder="Type something"
-                  type="text"
-                  className="grow bg-transparent outline-none"
-                  value={input.content}
-                  onChange={(e) =>
-                    setInput(
-                      (prev) =>
-                        (prev = {
-                          ...prev,
-                          content: e.target.value,
-                        })
-                    )
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      if (input.content !== "") {
-                        mutateAddComment({ content: input.content, postId });
-                      }
+          <div className="flex flex-col items-center gap-1 self-end border-b p-1">
+            <div className=" flex items-center gap-1 ">
+              <textarea
+                placeholder="Add a comment"
+                className="w-40 bg-transparent outline-none sm:w-64 md:w-96"
+                value={input.content}
+                onChange={(e) =>
+                  setInput(
+                    (prev) =>
+                      (prev = {
+                        content: e.target.value,
+                      })
+                  )
+                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (input.content !== "") {
+                      mutateAddComment({ content: input.content, postId });
                     }
-                  }}
-                />
+                  }
+                }}
+              />
+              <div className="flex flex-col items-center justify-center">
                 <button
-                  className="m-auto rounded-md bg-slate-500 p-1 text-sm transition-all duration-300 hover:bg-slate-400 md:text-base"
+                  className="m-auto rounded-md bg-slate-500 px-1 text-sm transition-all duration-300 hover:bg-slate-400 md:text-base"
                   onClick={() =>
                     mutateAddComment({ content: input.content, postId })
                   }
@@ -185,60 +192,63 @@ const PostPage: NextPage = () => {
                 </p>
               </div>
             </div>
-          ) : null}
-          {comments?.map((comment) => {
-            return (
-              <div
-                key={comment.id}
-                className="flex items-end border-b bg-slate-700 p-1"
-              >
-                <div className="flex justify-start gap-2 md:p-2">
-                  <Link
-                    href={`/@${comment?.commentAuthor?.username}`}
-                    className=""
-                  >
-                    <Image
-                      src={comment?.commentAuthor?.profilePicture || ""}
-                      alt={`@${comment?.commentAuthor?.username}'s avatar`}
-                      className="h-10 w-10 rounded-full md:h-12 md:w-12"
-                      width={48}
-                      height={48}
-                    />
-                  </Link>
-                  <div className="flex flex-col">
-                    <div className="flex gap-1 text-sm text-slate-300">
-                      <Link href={`/@${comment?.commentAuthor?.username}`}>
-                        <span className="font-bold">{`@${comment?.commentAuthor?.username}`}</span>
-                      </Link>
-                      <span className="font-thin">{`∙ ${dayjs(
-                        comment.createdAt
-                      ).fromNow()}`}</span>
+          </div>
 
-                      {user?.id === comment?.authorId ? (
-                        <button
-                          className="text-xs text-gray-500"
-                          onClick={() => {
-                            mutateDelete({
-                              postId: post.id,
-                              authorId: author.id,
-                            });
-                          }}
-                        >
-                          <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
-                          ❌delete
-                        </button>
-                      ) : null}
-                    </div>
-                    <div className="max-w-[15rem] grow sm:max-w-md md:max-w-lg">
-                      <span className=" break-words text-base md:text-lg">
-                        {comment.content}
-                      </span>
+          <div className="flex flex-col-reverse">
+            {comments?.map((comment) => {
+              return (
+                <div
+                  key={comment.id}
+                  className="flex items-end border-b bg-slate-700 p-1"
+                >
+                  <div className="flex justify-start gap-2 md:p-2">
+                    <Link
+                      href={`/@${comment?.commentAuthor?.username}`}
+                      className=""
+                    >
+                      <Image
+                        src={comment.commentAuthor?.profilePicture || ""}
+                        alt={`@${comment.commentAuthor?.username}'s avatar`}
+                        className="h-10 w-10 rounded-full md:h-12 md:w-12"
+                        width={48}
+                        height={48}
+                      />
+                    </Link>
+                    <div className="flex flex-col">
+                      <div className="flex gap-1 text-sm text-slate-300">
+                        <Link href={`/@${comment.commentAuthor?.username}`}>
+                          <span className="font-bold">{`@${comment.commentAuthor?.username}`}</span>
+                        </Link>
+                        <span className="font-thin">{`∙ ${dayjs(
+                          comment.createdAt
+                        ).fromNow()}`}</span>
+
+                        {user?.id === comment?.authorId ? (
+                          <button
+                            className="text-xs text-gray-500"
+                            onClick={() => {
+                              mutateDeleteComment({
+                                commentId: comment.id,
+                                authorId: comment.authorId,
+                              });
+                            }}
+                          >
+                            <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
+                            ❌delete
+                          </button>
+                        ) : null}
+                      </div>
+                      <div className="max-w-[15rem] grow sm:max-w-md md:max-w-lg">
+                        <span className=" break-words text-base md:text-lg">
+                          {comment.content}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </PageLayout>
     </>

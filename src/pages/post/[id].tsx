@@ -154,7 +154,8 @@ const PostPage: NextPage = () => {
             <div className=" flex items-center gap-1 ">
               <textarea
                 placeholder="Add a comment"
-                className="w-40 bg-transparent outline-none sm:w-64 md:w-96"
+                rows={2}
+                className="w-40 resize-none bg-transparent outline-none sm:w-64 md:w-96"
                 value={input.content}
                 onChange={(e) =>
                   setInput(
@@ -175,7 +176,7 @@ const PostPage: NextPage = () => {
               />
               <div className="flex flex-col items-center justify-center">
                 <button
-                  className="m-auto rounded-md bg-slate-500 px-1 text-sm transition-all duration-300 hover:bg-slate-400 md:text-base"
+                  className="m-auto rounded-md bg-blue-600 px-1 text-sm transition-all duration-300 hover:bg-blue-500 md:text-base"
                   onClick={() =>
                     mutateAddComment({ content: input.content, postId })
                   }

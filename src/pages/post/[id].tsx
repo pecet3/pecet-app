@@ -13,10 +13,20 @@ import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { LoadingSpinner, LoadingFullPage } from "~/components/loading";
 import { useRouter } from "next/router";
+import { BsPlusCircle } from "react-icons/bs";
 dayjs.extend(relativeTime);
 
 const PostPage: NextPage = () => {
+  const [input, setInput] = useState({
+    content: "",
+  });
   const router = useRouter();
+
+  const [counter, setCounter] = useState(0);
+
+  const maxContentLength = 280;
+
+  const [addComment, setAddComment] = useState(false);
 
   const postId = router.query.id?.toString();
 
@@ -29,7 +39,34 @@ const PostPage: NextPage = () => {
     postId: postId,
   });
 
-  const { mutate: mutateDelete } = api.posts.delete.useMutation({});
+  const { mutate: mutateDelete } = api.posts.delete.useMutation({
+    onSuccess: () => {
+      toast.success("You deleted the post!");
+    },
+    onError: (e) => {
+      toast.error("Ups...something went wrong");
+    },
+  });
+
+  const { mutate: mutateAddComment } = api.posts.addComment.useMutation({
+    onSuccess: () => {
+      setInput({
+        content: "",
+      });
+      // void ctx.posts.getAll.invalidate();
+      toast.success("You added the comment!");
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+
+      if (errorMessage && errorMessage[0]) {
+        console.log("zodError", errorMessage[0]);
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("You can add one post per hour");
+      }
+    },
+  });
 
   if (!data || typeof data === "undefined") return null;
 
@@ -67,11 +104,10 @@ const PostPage: NextPage = () => {
                 <Link href={`/@${author.username}`}>
                   <span className="font-bold">{`@${author.username}`}</span>
                 </Link>
-                <Link href={`/post/${post.id}`}>
-                  <span className="font-thin">{`∙ ${dayjs(
-                    post.createdAt
-                  ).fromNow()}`}</span>
-                </Link>
+
+                <span className="font-thin">{`∙ ${dayjs(
+                  post.createdAt
+                ).fromNow()}`}</span>
                 {user?.id === post.authorId ? (
                   <button
                     className="text-xs text-gray-500"
@@ -96,9 +132,60 @@ const PostPage: NextPage = () => {
           </div>
         </div>
         <div>
-          <p className="flex justify-center border-b py-1 text-xs font-extralight">
-            Comments
-          </p>
+          <div className="flex justify-around border-b">
+            <button
+              className="flex items-center gap-1"
+              onClick={() => setAddComment(true)}
+            >
+              <BsPlusCircle size={18} />
+              Add a Comment
+            </button>
+          </div>
+          {addComment ? (
+            <div className="flex flex-col items-center gap-1 self-end">
+              <div className="flex flex-col items-center gap-1 md:flex-row">
+                <input
+                  placeholder="Type something"
+                  type="text"
+                  className="grow bg-transparent outline-none"
+                  value={input.content}
+                  onChange={(e) =>
+                    setInput(
+                      (prev) =>
+                        (prev = {
+                          ...prev,
+                          content: e.target.value,
+                        })
+                    )
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (input.content !== "") {
+                        mutateAddComment({ content: input.content, postId });
+                      }
+                    }
+                  }}
+                />
+                <button
+                  className="m-auto rounded-md bg-slate-500 p-1 text-sm transition-all duration-300 hover:bg-slate-400 md:text-base"
+                  onClick={() =>
+                    mutateAddComment({ content: input.content, postId })
+                  }
+                  disabled={counter > maxContentLength}
+                >
+                  Submit
+                </button>
+                <p
+                  className={`text-[10px] ${
+                    counter > maxContentLength ? "text-red-400" : ""
+                  }`}
+                >
+                  {counter}/{maxContentLength}
+                </p>
+              </div>
+            </div>
+          ) : null}
           {comments?.map((comment) => {
             return (
               <div
@@ -163,6 +250,7 @@ import { appRouter } from "~/server/api/root";
 import superjson from "superjson";
 import { prisma } from "../../server/db";
 import PageLayout from "~/pages/layout";
+import { toast } from "react-hot-toast";
 
 export async function getStaticProps(
   context: GetStaticPropsContext<{ id: string }>

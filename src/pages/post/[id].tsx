@@ -204,12 +204,14 @@ const PostPage: NextPage = () => {
                 >
                   <div className="flex justify-start gap-2 md:p-2">
                     <Link
-                      href={`/@${comment?.commentAuthor?.username}`}
+                      href={`/@${comment?.commentAuthor?.username || ""}`}
                       className=""
                     >
                       <Image
                         src={comment.commentAuthor?.profilePicture || ""}
-                        alt={`@${comment.commentAuthor?.username}'s avatar`}
+                        alt={`@${
+                          comment.commentAuthor?.username || ""
+                        }'s avatar`}
                         className="h-10 w-10 rounded-full md:h-12 md:w-12"
                         width={48}
                         height={48}
@@ -217,8 +219,12 @@ const PostPage: NextPage = () => {
                     </Link>
                     <div className="flex flex-col">
                       <div className="flex gap-1 text-sm text-slate-300">
-                        <Link href={`/@${comment.commentAuthor?.username}`}>
-                          <span className="font-bold">{`@${comment.commentAuthor?.username}`}</span>
+                        <Link
+                          href={`/@${comment.commentAuthor?.username || ""}`}
+                        >
+                          <span className="font-bold">{`@${
+                            comment.commentAuthor?.username || ""
+                          }`}</span>
                         </Link>
                         <span className="font-thin">{`∙ ${dayjs(
                           comment.createdAt

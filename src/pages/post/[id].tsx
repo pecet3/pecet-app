@@ -16,6 +16,21 @@ import { useRouter } from "next/router";
 import { BsPlusCircle } from "react-icons/bs";
 dayjs.extend(relativeTime);
 
+interface Comment {
+  commentAuthor:
+    | {
+        id: string;
+        username: string;
+        profilePicture: string;
+      }
+    | undefined;
+  id: string;
+  authorId: string;
+  createdAt: Date;
+  content: string;
+  postId: string;
+}
+
 const PostPage: NextPage = () => {
   const [input, setInput] = useState({
     content: "",
@@ -197,7 +212,7 @@ const PostPage: NextPage = () => {
           </div>
 
           <div className="flex flex-col-reverse">
-            {comments.map((comment) => {
+            {comments.map((comment: Comment) => {
               return (
                 <div
                   key={comment.id}

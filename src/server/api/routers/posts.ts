@@ -8,9 +8,13 @@ import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/ap
 
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
-import type { Post } from "@prisma/client"
+import type { Post, Comment } from "@prisma/client"
 
-const addUserDataToPosts = async (posts: Post[]) => {
+type PostWithComments = Post & {
+    comments: Comment[],
+}
+
+const addUserDataToPosts = async (posts: PostWithComments[]) => {
     const userId = posts.map(post => post.authorId)
 
     const users = (await clerkClient.users.getUserList({

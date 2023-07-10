@@ -14,7 +14,7 @@ model Post {
   content   String    @db.VarChar(280)
   authorId  String
   emoji     String?
-  comments  Comment[] @relation("PostToComment")
+  comments  Comment[]
 
   @@index([authorId])
 }
@@ -25,7 +25,7 @@ model Comment {
   createdAt DateTime @default(now())
   content   String   @db.VarChar(280)
   postId    String
-  post      Post     @relation("PostToComment", fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
 
   @@index([postId])
 }

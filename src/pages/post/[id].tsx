@@ -197,7 +197,7 @@ const PostPage: NextPage = () => {
           </div>
 
           <div className="flex flex-col-reverse">
-            {comments?.map((comment) => {
+            {comments.map((comment) => {
               return (
                 <div
                   key={comment.id}
@@ -205,7 +205,7 @@ const PostPage: NextPage = () => {
                 >
                   <div className="flex justify-start gap-2 md:p-2">
                     <Link
-                      href={`/@${comment?.commentAuthor?.username || ""}`}
+                      href={`/@${comment.commentAuthor?.username || ""}`}
                       className=""
                     >
                       <Image

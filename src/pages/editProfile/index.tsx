@@ -100,7 +100,7 @@ const EditProfilePage = () => {
               data.backgroundImg ??
               "https://images2.alphacoders.com/941/thumb-1920-941898.jpg"
             }
-            className="fill h-full bg-slate-800 opacity-75  blur-sm"
+            className="fill h-full bg-slate-800 opacity-80  blur-sm"
             alt="Your profile photo"
           />
           <div className="absolute right-0 top-6">
@@ -153,6 +153,7 @@ const EditProfilePage = () => {
                 }
                 id="description"
                 rows={4}
+                value={input.description}
                 className="block w-56 resize-none rounded-lg border  border-gray-600 bg-gray-700
               p-2.5 text-sm
               text-white placeholder-gray-400 focus:border-blue-500

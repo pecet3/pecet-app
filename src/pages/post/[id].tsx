@@ -212,7 +212,7 @@ const PostPage: NextPage = () => {
           </div>
 
           <div className="flex flex-col-reverse">
-            {comments.map((comment: Comment) => {
+            {comments.map((comment) => {
               return (
                 <div
                   key={comment.id}

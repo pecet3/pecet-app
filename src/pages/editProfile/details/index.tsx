@@ -3,7 +3,7 @@ import { UserProfile } from "@clerk/nextjs";
 import "@uploadthing/react/styles.css";
 import Head from "next/head";
 
-const EditProfilePage = () => {
+const EditProfileDetailsPage = () => {
   return (
     <>
       <Head>
@@ -18,4 +18,4 @@ const EditProfilePage = () => {
   );
 };
 
-export default EditProfilePage;
+export default EditProfileDetailsPage;

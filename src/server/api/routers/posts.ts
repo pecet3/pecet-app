@@ -9,6 +9,7 @@ import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/ap
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
 import type { Post, Comment } from "@prisma/client"
+import { filterUserForClient } from '../../helpers/filterUserForClient';
 
 type PostWithComments = Post & {
     comments: Comment[],
@@ -22,8 +23,9 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
         limit: 100,
     })).map(filterUserForClient)
 
+
     return posts.map((post) => {
-        const author = users.find((user) => user.id === post.authorId);
+        const author = users.find((user) => user!.id === post.authorId);
 
         if (!author) {
             console.error("AUTHOR NOT FOUND", post);
@@ -32,22 +34,13 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
                 message: `Author for post not found. POST ID: ${post.id}, USER ID: ${post.authorId}`,
             });
         }
-        // if (!author.username) {
-        //   // user the ExternalUsername
-        //   if (!author.externalUsername) {
-        //     throw new TRPCError({
-        //       code: "INTERNAL_SERVER_ERROR",
-        //       message: `Author has no GitHub Account: ${author.id}`,
-        //     });
-        //   }
-        //   author.username = author.externalUsername;
-        // }
+
 
         return {
             post: {
                 ...post,
                 comments: post.comments.map(comment => {
-                    const commentAuthor = users.find((user) => user.id === comment.authorId)
+                    const commentAuthor = users.find((user) => user!.id === comment.authorId)
                     return {
                         ...comment,
                         commentAuthor
@@ -69,9 +62,6 @@ const ratelimit = new Ratelimit({
     analytics: true,
 });
 
-const filterUserForClient = (user: User) => {
-    return { id: user.id, username: user.username as string, profilePicture: user.profileImageUrl }
-}
 
 export const postsRouter = createTRPCRouter({
     getAll: publicProcedure.query(async ({ ctx }) => {
@@ -90,7 +80,7 @@ export const postsRouter = createTRPCRouter({
         })).map(filterUserForClient)
 
         return posts.map((post) => {
-            const author = users.find((user) => user.id === post.authorId)
+            const author = users.find((user) => user!.id === post.authorId)
 
 
             if (!author || !author.username) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author not found" })
@@ -98,7 +88,7 @@ export const postsRouter = createTRPCRouter({
                 post: {
                     ...post,
                     comments: post.comments.map(comment => {
-                        const commentAuthor = users.find((user) => user.id === comment.authorId)
+                        const commentAuthor = users.find((user) => user!.id === comment.authorId)
                         return {
                             ...comment,
                             commentAuthor

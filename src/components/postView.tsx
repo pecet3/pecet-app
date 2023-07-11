@@ -36,7 +36,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
   return (
     <div className="border-b">
       <div className="flex items-end">
-        <div className="flex justify-start gap-2 p-1 md:p-2">
+        <div className="flex justify-start gap-2 px-1 pt-1 md:px-2 md:pt-2">
           <Link href={`/@${author.username}`} className="">
             <Image
               src={author.profilePicture}

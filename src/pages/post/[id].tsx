@@ -111,6 +111,7 @@ const PostPage: NextPage = () => {
   )
     return <LoadingFullPage />;
 
+  console.log(comments);
   return (
     <>
       <Head>

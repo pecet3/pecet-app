@@ -18,10 +18,12 @@ type PostWithComments = Post & {
 const addUserDataToPosts = async (posts: PostWithComments[]) => {
     const userId = posts.map(post => post.authorId)
 
+
     const users = (await clerkClient.users.getUserList({
         userId,
         limit: 100,
     })).map(filterUserForClient)
+
 
 
     return posts.map((post) => {
@@ -127,7 +129,7 @@ export const postsRouter = createTRPCRouter({
         }),
     addComment: privateProcedure.input(z.object({
         postId: z.string(),
-        content: z.string().min(1).max(280)
+        content: z.string().min(1).max(280),
     })).mutation(async ({ ctx, input }) => {
         const authorId = ctx.userId;
 

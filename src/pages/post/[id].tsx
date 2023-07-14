@@ -110,7 +110,7 @@ const PostPage: NextPage = () => {
     typeof comments === "undefined"
   )
     return <LoadingFullPage />;
-
+  if (!comments) return null;
   console.log(comments);
   return (
     <>

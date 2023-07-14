@@ -43,8 +43,10 @@ const addUserDataToComments = async (comments: Comment[]) => {
 const addUserDataToPosts = async (posts: PostWithComments[]) => {
     const userId = posts.map(post => post.authorId)
 
+    const author = posts[0]?.comments.map(comment => comment.authorId) as string[]
+
     const users = (await clerkClient.users.getUserList({
-        userId,
+        orderBy: '-created_at',
         limit: 100,
     })).map(filterUserForClient)
 
@@ -65,7 +67,13 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
         return {
             post: {
                 ...post,
-                comments: addUserDataToComments(post.comments)
+                comments: post.comments.map(comment => {
+                    const commentAuthor = users.find((user) => user!.id === comment.authorId)
+                    return {
+                        ...comment,
+                        commentAuthor
+                    }
+                }),
             },
             author: {
                 ...author,

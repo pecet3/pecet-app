@@ -14,10 +14,34 @@ import { filterUserForClient } from '../../helpers/filterUserForClient';
 type PostWithComments = Post & {
     comments: Comment[],
 }
+const addUserDataToComments = async (comments: Comment[]) => {
+    const userId = comments.map(comment => comment.authorId)
+
+    const users = (await clerkClient.users.getUserList({
+        userId,
+        limit: 100,
+    })).map(filterUserForClient)
+
+    return comments.map((comment) => {
+        const commentAuthor = users.find((user) => user!.id === comment.authorId);
+
+        if (!commentAuthor) {
+            console.error("AUTHOR NOT FOUND", comment);
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: `Author for post not found. COMMENT ID: ${comment.id}, USER ID: ${comment.authorId}`,
+            });
+        }
+
+        return {
+            ...comment,
+            commentAuthor
+        }
+    })
+}
 
 const addUserDataToPosts = async (posts: PostWithComments[]) => {
     const userId = posts.map(post => post.authorId)
-
 
     const users = (await clerkClient.users.getUserList({
         userId,
@@ -41,13 +65,7 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
         return {
             post: {
                 ...post,
-                comments: post.comments.map(comment => {
-                    const commentAuthor = users.find((user) => user!.id === comment.authorId)
-                    return {
-                        ...comment,
-                        commentAuthor
-                    }
-                }),
+                comments: addUserDataToComments(post.comments)
             },
             author: {
                 ...author,
@@ -80,12 +98,6 @@ export const postsRouter = createTRPCRouter({
             userId: posts.map((post) => post.authorId),
             limit: 100,
         })).map(filterUserForClient)
-
-        const Commentusers = (await clerkClient.users.getUserList({
-            userId: posts.comments.map((comment) => comment),
-            limit: 100,
-        })).map(filterUserForClient)
-
 
         return posts.map((post) => {
             const author = users.find((user) => user!.id === post.authorId)

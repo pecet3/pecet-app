@@ -72,11 +72,35 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
 }
 
 // Create a new ratelimiter, that allows 3 requests per 60 seconds
-const ratelimit = new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(3, "60 s"),
-    analytics: true,
-});
+// const ratelimit = {
+//     main: new Ratelimit({
+//         redis: Redis.fromEnv(),
+//         limiter: Ratelimit.slidingWindow(3, "60 s"),
+//         analytics: true,
+//     }),
+//     comment: new Ratelimit({
+//         redis: Redis.fromEnv(),
+//         limiter: Ratelimit.slidingWindow(1, "10 s"),
+//         analytics: true,
+//         prefix: "ratelimit:comment"
+//     })
+// }
+const redis = Redis.fromEnv()
+
+const ratelimit = {
+    post: new Ratelimit({
+        redis,
+        analytics: true,
+        prefix: "ratelimit:post",
+        limiter: Ratelimit.slidingWindow(1, "10m"),
+    }),
+    comment: new Ratelimit({
+        redis,
+        analytics: true,
+        prefix: "ratelimit:comment",
+        limiter: Ratelimit.slidingWindow(1, "10s"),
+    })
+}
 
 
 export const postsRouter = createTRPCRouter({
@@ -119,7 +143,7 @@ export const postsRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             const authorId = ctx.userId;
 
-            const { success } = await ratelimit.limit(authorId)
+            const { success } = await ratelimit.post.limit(authorId)
 
             if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" })
 
@@ -138,7 +162,7 @@ export const postsRouter = createTRPCRouter({
     })).mutation(async ({ ctx, input }) => {
         const authorId = ctx.userId;
 
-        const { success } = await ratelimit.limit(authorId)
+        const { success } = await ratelimit.comment.limit(authorId)
 
         if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" })
 

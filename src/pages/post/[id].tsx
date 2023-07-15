@@ -13,23 +13,7 @@ import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { LoadingSpinner, LoadingFullPage } from "~/components/loading";
 import { useRouter } from "next/router";
-import { BsPlusCircle } from "react-icons/bs";
 dayjs.extend(relativeTime);
-
-interface Comment {
-  commentAuthor:
-    | {
-        id: string;
-        username: string;
-        profilePicture: string;
-      }
-    | undefined;
-  id: string;
-  authorId: string;
-  createdAt: Date;
-  content: string;
-  postId: string;
-}
 
 const PostPage: NextPage = () => {
   const [input, setInput] = useState({
@@ -75,7 +59,7 @@ const PostPage: NextPage = () => {
   const { mutate: mutateDeleteComment } = api.posts.deleteComment.useMutation({
     onSuccess: () => {
       toast.success("You deleted a comment!");
-      void ctx.posts.getPostById.invalidate();
+      void ctx.posts.getCommentsByPostId.invalidate();
     },
     onError: (e) => {
       toast.error("Ups...something went wrong");
@@ -302,7 +286,7 @@ export async function getStaticProps(
   // prefetch
 
   await helpers.posts.getPostById.prefetch({ postId });
-
+  await helpers.posts.getCommentsByPostId.prefetch({ postId });
   return {
     props: {
       trpcState: helpers.dehydrate(),

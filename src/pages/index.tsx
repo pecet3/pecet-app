@@ -8,7 +8,6 @@ import { api } from "~/utils/api";
 import { PostView } from "~/components/postView";
 import { toast } from "react-hot-toast";
 import { LoadingSpinner, LoadingFullPage } from "../components/loading";
-import { BiLogoPostgresql } from "react-icons/bi";
 import PageLayout from "./layout";
 
 dayjs.extend(relativeTime);
@@ -73,11 +72,11 @@ const CreatePostWizzard = () => {
   if (!user) return null;
 
   return (
-    <div className="flex w-full items-center justify-center gap-1 md:gap-2">
+    <div className="flex w-full items-center justify-center gap-1 bg-slate-900 p-1 sm:p-2 md:gap-2">
       <Link href={`/@${user.username ?? ""}`}>
         <Image
           src={user.profileImageUrl}
-          className={`mt-1 h-12 w-12 rounded-full md:h-16 md:w-16 ${
+          className={`h-12 w-12 rounded-full md:h-16 md:w-16 ${
             input.content ? "hidden md:flex" : ""
           }`}
           alt="Your profile photo"
@@ -164,7 +163,6 @@ const CreatePostWizzard = () => {
 
 const Feed = () => {
   const { data, isLoading: postLoading } = api.posts.getAll.useQuery();
-  console.log(data);
   if (postLoading) return <LoadingFullPage />;
   if (!data) return <div>Ups...Something went wrong</div>;
   return (
@@ -190,13 +188,18 @@ export default function Home() {
   return (
     <>
       <PageLayout>
-        <div className="border-b border-slate-400 p-2">
+        <div className="border-b border-slate-400">
           {!isSignedIn && (
-            <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />
+            <Link
+              href="/signIn"
+              className="rounded-md bg-blue-600 p-1 duration-300 hover:bg-blue-500"
+            >
+              Sign in
+            </Link>
           )}
           {isSignedIn && (
             <>
-              <nav className="flex justify-start gap-2 text-xs ">
+              <nav className="flex justify-start gap-2 border-b bg-slate-950 p-2 text-xs">
                 <div className=" flex w-16 justify-center rounded-md bg-slate-700 text-slate-200">
                   <SignOutButton />
                 </div>
@@ -204,7 +207,9 @@ export default function Home() {
                   <Link href="/editProfile">Edit a profile</Link>
                 </span>
 
-                <BiLogoPostgresql size={24} />
+                <span className="flex items-center justify-center font-extralight">
+                  ponarzekaj.com😡
+                </span>
               </nav>
               <CreatePostWizzard />
             </>

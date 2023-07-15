@@ -62,16 +62,7 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
 
 
         return {
-            post: {
-                ...post,
-                comments: post.comments.map(comment => {
-                    const commentAuthor = users.find((user) => user!.id === comment.authorId)
-                    return {
-                        ...comment,
-                        commentAuthor
-                    }
-                }),
-            },
+            post,
             author: {
                 ...author,
                 username: author.username
@@ -110,16 +101,7 @@ export const postsRouter = createTRPCRouter({
 
             if (!author || !author.username) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author not found" })
             return {
-                post: {
-                    ...post,
-                    comments: post.comments.map(comment => {
-                        const commentAuthor = users.find((user) => user!.id === comment.authorId)
-                        return {
-                            ...comment,
-                            commentAuthor
-                        }
-                    }),
-                },
+                post,
                 author: {
                     ...author,
                     username: author.username

@@ -87,7 +87,7 @@ const PostPage: NextPage = () => {
       setInput({
         content: "",
       });
-      void ctx.posts.getPostById.invalidate();
+      void ctx.posts.getCommentsByPostId.invalidate();
       toast.success("You added a comment!");
     },
     onError: (e) => {

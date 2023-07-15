@@ -43,14 +43,11 @@ const addUserDataToComments = async (comments: Comment[]) => {
 const addUserDataToPosts = async (posts: PostWithComments[]) => {
     const userId = posts.map(post => post.authorId)
 
-    const author = posts[0]?.comments.map(comment => comment.authorId) as string[]
 
     const users = (await clerkClient.users.getUserList({
-        orderBy: '-created_at',
+        userId,
         limit: 100,
     })).map(filterUserForClient)
-
-
 
     return posts.map((post) => {
         const author = users.find((user) => user!.id === post.authorId);
@@ -261,6 +258,18 @@ export const postsRouter = createTRPCRouter({
     }
     ),
 
+    getCommentsByPostId: publicProcedure.input(z.object({
+        postId: z.string(),
+    })).query(async ({ ctx, input }) => {
+        const comments = await ctx.prisma.comment.findMany({
+            where: {
+                postId: input.postId
+            }
+        }).then(addUserDataToComments)
+
+        return comments
+    })
+    ,
     getPostsByUserId: publicProcedure
         .input(
             z.object({
@@ -282,4 +291,5 @@ export const postsRouter = createTRPCRouter({
 
             return posts
         }),
+
 });

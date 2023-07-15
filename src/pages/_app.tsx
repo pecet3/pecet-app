@@ -9,8 +9,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
       <Head>
-        <title>pecetApp</title>
-        <meta name="description" content="pecet app" />
+        <title>ponarzekaj.com</title>
+        <meta
+          name="ponarzekaj.com"
+          content="the website where you can complain about life, your wife and shity job"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Toaster position="bottom-center" />

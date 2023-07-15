@@ -96,6 +96,8 @@ const EditProfilePage = () => {
           <Image
             width={1200}
             height={720}
+            quality={50}
+            priority={true}
             src={
               data.backgroundImg ??
               "https://images2.alphacoders.com/941/thumb-1920-941898.jpg"
@@ -141,7 +143,7 @@ const EditProfilePage = () => {
             <div className="m-auto flex flex-col items-center justify-center">
               <label
                 htmlFor="description"
-                className="mt-4 block text-sm font-medium text-gray-900 dark:text-white"
+                className="mt-4 block text-sm font-medium text-slate-200"
               >
                 Edit your description
               </label>

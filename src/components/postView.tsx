@@ -8,6 +8,8 @@ import { SignUp, useUser, SignOutButton } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import { FaRegComments } from "react-icons/fa";
 
 dayjs.extend(relativeTime);
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
@@ -82,10 +84,18 @@ export const PostView = ({ post, author }: PostWithUser) => {
           </div>
         </div>
       </div>
-      <Link href={`/post/${post.id}`} className="">
-        <p className="px-1 text-right text-sm">
+      <Link
+        href={`/post/${post.id}`}
+        className="m-auto mb-1 flex justify-end gap-2"
+      >
+        <span className="flex items-center justify-center text-xs">
+          <IoMdAddCircleOutline size={16} className="text-green-500" />
+          Add a comment
+        </span>
+        <span className="mr-1 flex items-center justify-center text-right text-xs">
+          <FaRegComments size={16} className="mr-1 text-blue-500" />
           Comments({post.comments.length})
-        </p>
+        </span>
       </Link>
     </div>
   );

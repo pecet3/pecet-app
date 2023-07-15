@@ -14,6 +14,24 @@ import { filterUserForClient } from '../../helpers/filterUserForClient';
 type PostWithComments = Post & {
     comments: Comment[],
 }
+
+const redis = Redis.fromEnv()
+
+const ratelimit = {
+    post: new Ratelimit({
+        redis,
+        analytics: true,
+        prefix: "ratelimit:post",
+        limiter: Ratelimit.slidingWindow(1, "10m"),
+    }),
+    comment: new Ratelimit({
+        redis,
+        analytics: true,
+        prefix: "ratelimit:comment",
+        limiter: Ratelimit.slidingWindow(1, "10s"),
+    })
+}
+
 const addUserDataToComments = async (comments: Comment[]) => {
     const userId = comments.map(comment => comment.authorId)
 
@@ -71,37 +89,6 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
     });
 }
 
-// Create a new ratelimiter, that allows 3 requests per 60 seconds
-// const ratelimit = {
-//     main: new Ratelimit({
-//         redis: Redis.fromEnv(),
-//         limiter: Ratelimit.slidingWindow(3, "60 s"),
-//         analytics: true,
-//     }),
-//     comment: new Ratelimit({
-//         redis: Redis.fromEnv(),
-//         limiter: Ratelimit.slidingWindow(1, "10 s"),
-//         analytics: true,
-//         prefix: "ratelimit:comment"
-//     })
-// }
-const redis = Redis.fromEnv()
-
-const ratelimit = {
-    post: new Ratelimit({
-        redis,
-        analytics: true,
-        prefix: "ratelimit:post",
-        limiter: Ratelimit.slidingWindow(1, "10m"),
-    }),
-    comment: new Ratelimit({
-        redis,
-        analytics: true,
-        prefix: "ratelimit:comment",
-        limiter: Ratelimit.slidingWindow(1, "10s"),
-    })
-}
-
 
 export const postsRouter = createTRPCRouter({
     getAll: publicProcedure.query(async ({ ctx }) => {
@@ -109,29 +96,11 @@ export const postsRouter = createTRPCRouter({
             orderBy: [{ createdAt: "desc" }],
             take: 100,
             include: {
-                comments: true,
+                comments: true
+            },
+        }).then(addUserDataToPosts)
 
-            }
-        });
-
-        const users = (await clerkClient.users.getUserList({
-            userId: posts.map((post) => post.authorId),
-            limit: 100,
-        })).map(filterUserForClient)
-
-        return posts.map((post) => {
-            const author = users.find((user) => user!.id === post.authorId)
-
-
-            if (!author || !author.username) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author not found" })
-            return {
-                post,
-                author: {
-                    ...author,
-                    username: author.username
-                }
-            }
-        })
+        return posts
     }),
     create: privateProcedure
         .input(

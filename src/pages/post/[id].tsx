@@ -58,6 +58,10 @@ const PostPage: NextPage = () => {
     postId: postId,
   });
 
+  const { data: comments } = api.posts.getCommentsByPostId.useQuery({
+    postId: postId,
+  });
+
   const { mutate: mutateDeletePost } = api.posts.delete.useMutation({
     onSuccess: () => {
       toast.success("You deleted a post!");
@@ -102,7 +106,6 @@ const PostPage: NextPage = () => {
 
   const author = data[0]?.author;
   const post = data[0]?.post;
-  const comments = post?.comments;
   if (
     !userLoaded ||
     typeof author === "undefined" ||
@@ -111,7 +114,6 @@ const PostPage: NextPage = () => {
   )
     return <LoadingFullPage />;
   if (!comments) return null;
-  console.log(comments);
   return (
     <>
       <Head>

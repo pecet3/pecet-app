@@ -59,6 +59,7 @@ const PostPage: NextPage = () => {
   const { mutate: mutateDeleteComment } = api.posts.deleteComment.useMutation({
     onSuccess: () => {
       toast.success("You deleted a comment!");
+
       void ctx.posts.getCommentsByPostId.invalidate();
     },
     onError: (e) => {
@@ -106,7 +107,7 @@ const PostPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PageLayout>
-        <div className="flex items-end border-b bg-slate-900 p-1">
+        <div className="flex items-end border-b bg-slate-950 p-1">
           <div className="flex justify-start gap-2 md:p-2">
             <Link href={`/@${author.username}`} className="">
               <Image
@@ -153,12 +154,12 @@ const PostPage: NextPage = () => {
           </div>
         </div>
         <div>
-          <div className="flex flex-col items-center gap-1 self-end border-b p-1">
-            <div className=" flex items-center gap-1 ">
+          <div className="flex flex-col items-center gap-1 self-end border-b bg-slate-900 p-1">
+            <div className="flex w-full items-end gap-1 ">
               <textarea
                 placeholder="Add a comment"
                 rows={2}
-                className="w-40 resize-none bg-transparent outline-none sm:w-64 md:w-96"
+                className="grow resize-none bg-transparent p-1 outline-none"
                 value={input.content}
                 onChange={(e) =>
                   setInput(
@@ -177,7 +178,7 @@ const PostPage: NextPage = () => {
                   }
                 }}
               />
-              <div className="flex flex-col items-center justify-center">
+              <div className="mb-1 flex flex-col items-center justify-center">
                 <button
                   className="m-auto rounded-md bg-blue-600 px-1 text-sm transition-all duration-300 hover:bg-blue-500 md:text-base"
                   onClick={() =>

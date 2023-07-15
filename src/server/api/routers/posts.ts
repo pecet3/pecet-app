@@ -80,7 +80,10 @@ const addUserDataToPosts = async (posts: PostWithComments[]) => {
 
 
         return {
-            post,
+            post: {
+                ...post,
+                comments: post.comments.length
+            },
             author: {
                 ...author,
                 username: author.username

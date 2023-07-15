@@ -17,7 +17,7 @@ type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 export const PostView = ({ post, author }: PostWithUser) => {
   const { user } = useUser();
   const ctx = api.useContext();
-
+  console.log(post);
   const { mutate, isLoading: isDeleting } = api.posts.delete.useMutation({
     onSuccess: () => {
       void ctx.posts.getAll.invalidate();
@@ -94,7 +94,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
         </span>
         <span className="mr-1 flex items-center justify-center text-right text-xs">
           <FaRegComments size={16} className="mr-1 text-blue-500" />
-          Comments({post.comments.length})
+          Comments({post.comments})
         </span>
       </Link>
     </div>

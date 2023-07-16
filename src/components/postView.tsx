@@ -36,7 +36,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
     },
   });
   return (
-    <div className="m-1 rounded-md bg-slate-700  shadow-md shadow-slate-500 sm:m-2 sm:shadow-md ">
+    <div className="m-1 rounded-md bg-slate-700  shadow-md shadow-slate-500 sm:m-2 ">
       <div className="flex items-end">
         <div className="flex justify-start gap-2 px-1 pt-1 md:px-2 md:pt-2">
           <Link href={`/@${author.username}`} className="">
@@ -72,7 +72,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
             </div>
             <Link
               href={`/post/${post.id}`}
-              className="max-w-[15rem] grow sm:max-w-md md:max-w-lg"
+              className="max-w-[15rem] grow sm:max-w-md md:max-w-2xl"
             >
               <span className=" break-words text-base md:text-lg">
                 {post.content}

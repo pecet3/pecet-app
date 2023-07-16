@@ -72,7 +72,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
             </div>
             <Link
               href={`/post/${post.id}`}
-              className="max-w-[15rem] grow sm:max-w-md md:max-w-2xl"
+              className="max-w-[16rem] grow sm:max-w-md md:max-w-[36rem]"
             >
               <span className=" break-words text-base md:text-lg">
                 {post.content}

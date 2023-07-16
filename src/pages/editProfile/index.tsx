@@ -159,10 +159,9 @@ const EditProfilePage = () => {
                 className="block w-56 resize-none rounded-lg border  border-gray-600 bg-gray-700
               p-2.5 text-sm
               text-white placeholder-gray-400 focus:border-blue-500
-              focus:ring-blue-500"
+              focus:ring-blue-500 "
                 placeholder={
-                  (user.publicMetadata.description as string) ||
-                  "write rour description"
+                  (user.publicMetadata.description as string) || "..."
                 }
               ></textarea>
             </div>

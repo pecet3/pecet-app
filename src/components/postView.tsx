@@ -58,6 +58,14 @@ export const PostView = ({ post, author }: PostWithUser) => {
                   post.createdAt
                 ).fromNow()}`}</span>
               </Link>
+              <Link
+                href={`/post/${post.id}`}
+                className="mr-1 flex items-center justify-center text-right text-xs"
+              >
+                <p className="mx-1 font-thin">{` ∙`}</p>
+                <FaRegComments size={16} className="mr-1 text-blue-500" />
+                Comments({post.comments})
+              </Link>
               {user?.id === post.authorId ? (
                 <button
                   className="text-xs text-gray-500"
@@ -88,13 +96,9 @@ export const PostView = ({ post, author }: PostWithUser) => {
         href={`/post/${post.id}`}
         className="m-auto mb-1 flex justify-end gap-2"
       >
-        <span className="flex items-center justify-center text-xs">
+        <span className="mx-1 flex items-center justify-center text-xs ">
           <IoMdAddCircleOutline size={16} className="text-green-500" />
           Add a comment
-        </span>
-        <span className="mr-1 flex items-center justify-center text-right text-xs">
-          <FaRegComments size={16} className="mr-1 text-blue-500" />
-          Comments({post.comments})
         </span>
       </Link>
     </div>

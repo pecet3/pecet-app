@@ -107,7 +107,7 @@ const PostPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PageLayout>
-        <div className="flex items-end border-b bg-slate-950 p-1">
+        <div className="flex items-end border-b bg-slate-950 p-1 ">
           <div className="flex justify-start gap-2 md:p-2">
             <Link href={`/@${author.username}`} className="">
               <Image
@@ -204,7 +204,7 @@ const PostPage: NextPage = () => {
               return (
                 <div
                   key={comment.id}
-                  className="flex items-end border-b bg-slate-700 p-1"
+                  className="m-1 rounded-md bg-slate-700  shadow-md shadow-slate-500 sm:m-2"
                 >
                   <div className="flex justify-start gap-2 md:p-2">
                     <Link

@@ -207,9 +207,12 @@ export default function Home() {
                   <Link href="/editProfile">Edit a profile</Link>
                 </span>
 
-                <span className="flex items-center justify-center font-extralight">
+                <Link
+                  href="/"
+                  className="flex items-center justify-center font-extralight"
+                >
                   ponarzekaj.com😡
-                </span>
+                </Link>
               </nav>
               <CreatePostWizzard />
             </>

@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 .background {
-    background: rgb(124,132,135);
-    background: radial-gradient(circle, rgba(124,132,135,0.8911939775910365) 0%, rgba(16,61,79,1) 91%);
+    background-color: rgb(251, 207, 40);
+background-image:  url(https://utfs.io/f/628eed63-316a-4432-b213-e92c104d48db_emotikonki.jpg);
+background-size: auto;
+background-position: left top;
+background-repeat: repeat;
 }
 
 .scroll{

@@ -36,7 +36,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
     },
   });
   return (
-    <div className="m-1 rounded-md bg-slate-700  shadow-md shadow-slate-500 sm:m-2 ">
+    <div className="m-1 rounded-md bg-slate-700 shadow-md shadow-slate-950 sm:m-2 ">
       <div className="flex items-end">
         <div className="flex justify-start gap-2 px-1 pt-1 md:px-2 md:pt-2">
           <Link href={`/@${author.username}`} className="">

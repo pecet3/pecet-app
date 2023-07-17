@@ -66,17 +66,6 @@ export const PostView = ({ post, author }: PostWithUser) => {
                 <FaRegComments size={16} className="mr-1 text-blue-500" />
                 Comments({post.comments})
               </Link>
-              {user?.id === post.authorId ? (
-                <button
-                  className="text-xs text-gray-500"
-                  onClick={() => {
-                    mutate({ postId: post.id, authorId: author.id });
-                  }}
-                >
-                  <i className="text-xs font-extralight text-slate-200">{` ∙`}</i>{" "}
-                  ❌delete
-                </button>
-              ) : null}
             </div>
             <Link
               href={`/post/${post.id}`}
@@ -94,9 +83,20 @@ export const PostView = ({ post, author }: PostWithUser) => {
       </div>
       <Link
         href={`/post/${post.id}`}
-        className="m-auto mb-1 flex justify-end gap-2"
+        className="m-auto mb-1 mr-1 flex justify-end gap-2"
       >
-        <span className="mx-1 flex items-center justify-center text-xs ">
+        {user?.id === post.authorId ? (
+          <button
+            className="flex items-center gap-1 text-sm text-gray-500 "
+            onClick={() => {
+              mutate({ postId: post.id, authorId: author.id });
+            }}
+          >
+            ❌delete
+            <i className="text-xs font-extralight text-slate-200">{`∙`}</i>
+          </button>
+        ) : null}
+        <span className=" flex items-center justify-center text-xs ">
           <IoMdAddCircleOutline size={16} className="text-green-500" />
           Add a comment
         </span>

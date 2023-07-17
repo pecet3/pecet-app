@@ -60,7 +60,7 @@ const CreatePostWizzard = () => {
         console.log("zodError", errorMessage[0]);
         toast.error(errorMessage[0]);
       } else {
-        toast.error("You can add one post per hour");
+        toast.error("ANTYSPAM - You can add one post per 10 min");
       }
     },
   });

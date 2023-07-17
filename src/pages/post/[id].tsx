@@ -82,7 +82,7 @@ const PostPage: NextPage = () => {
         console.log("zodError", errorMessage[0]);
         toast.error(errorMessage[0]);
       } else {
-        toast.error("You can add one post per hour");
+        toast.error("ANTYSPAM ALERT!");
       }
     },
   });

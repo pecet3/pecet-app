@@ -204,9 +204,9 @@ const PostPage: NextPage = () => {
               return (
                 <div
                   key={comment.id}
-                  className="m-1 rounded-md bg-slate-700  shadow-md shadow-slate-500 sm:m-2"
+                  className="m-1 rounded-md bg-slate-700 shadow-md shadow-slate-950 sm:m-2 "
                 >
-                  <div className="flex justify-start gap-2 md:p-2">
+                  <div className="flex justify-start gap-2 p-1 md:p-2">
                     <Link
                       href={`/@${comment.commentAuthor?.username || ""}`}
                       className=""

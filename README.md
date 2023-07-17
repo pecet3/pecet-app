@@ -1,6 +1,6 @@
-# Create T3 App
+# ponarzekaj.com
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a repo of my portal where you can complain. [Click here to go the site](https://ponarzekaj.com/) project bootstrapped with `create-t3-app`.
 
 ## What's next? How do I make an app with this?
 

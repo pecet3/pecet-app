@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.background {
-    background-color: rgb(251, 207, 40);
+.background { 
 background-image:  url(https://utfs.io/f/628eed63-316a-4432-b213-e92c104d48db_emotikonki.jpg);
 background-size: auto;
 background-position: left top;

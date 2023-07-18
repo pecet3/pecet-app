@@ -85,7 +85,7 @@ const CreatePostWizzard = () => {
         />
       </Link>
       <input
-        placeholder="Type something"
+        placeholder="Type something what you mad about..."
         type="text"
         className="grow bg-transparent outline-none"
         value={input.content}

@@ -204,7 +204,7 @@ const PostPage: NextPage = () => {
               return (
                 <div
                   key={comment.id}
-                  className="m-1 rounded-md bg-slate-700 shadow-md shadow-slate-950 sm:m-2 "
+                  className="m-1 rounded-md bg-slate-700 shadow-md shadow-slate-950 "
                 >
                   <div className="flex justify-start gap-2 p-1 md:p-2">
                     <Link

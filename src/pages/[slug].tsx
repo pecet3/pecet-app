@@ -36,7 +36,7 @@ const ProfileFeed = (props: { userId: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-2 border-t">
+    <div className="flex flex-col">
       {data.map((fullpost) => (
         <PostView
           post={fullpost.post}
@@ -62,7 +62,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 
   if (isError)
     return (
-      <div className="flex justify-center">
+      <div className="flex flex-col justify-center">
         <p>error happend</p>
         <Link href="/">return to index</Link>
       </div>
